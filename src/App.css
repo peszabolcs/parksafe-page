@@ -623,6 +623,105 @@
   color: #10b981;
 }
 
+/* Target Audience Section */
+.target-audience {
+  padding: 80px 0;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  position: relative;
+}
+
+.target-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.target-header h2 {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.target-header p {
+  font-size: 20px;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.target-card {
+  background: white;
+  padding: 40px 32px;
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.target-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.05) 0%,
+    rgba(14, 165, 233, 0.05) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.target-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+.target-card:hover::before {
+  opacity: 1;
+}
+
+.target-icon {
+  font-size: 48px;
+  margin-bottom: 24px;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.target-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1f2937;
+  position: relative;
+  z-index: 2;
+}
+
+.target-card p {
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 16px;
+  position: relative;
+  z-index: 2;
+}
+
 /* Features Section */
 .features {
   padding: 100px 0;
@@ -926,6 +1025,15 @@
   }
 
   .features-header h2 {
+    font-size: 32px;
+  }
+
+  .target-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .target-header h2 {
     font-size: 32px;
   }
 }

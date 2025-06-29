@@ -105,6 +105,39 @@ function App() {
         </div>
       </section>
 
+      {/* Target Audience Section */}
+      <section className="target-audience">
+        <div className="container">
+          <div className="target-header">
+            <h2>Kinek szól a ParkSafe?</h2>
+            <p>
+              Nem csak bicikliseknek! Minden városi közlekedő megtalálja benne a
+              számítását.
+            </p>
+          </div>
+          <div className="target-grid">
+            <div className="target-card">
+              <div className="target-icon">🚴‍♂️</div>
+              <h3>Biciklisek</h3>
+              <p>
+                Napi ingázók és hétvégi kerékpárosok, akik biztonságos
+                tárolóhelyet keresnek a városban. Fedezd fel a kamerás, fedett
+                és közösség által ellenőrzött helyeket.
+              </p>
+            </div>
+            <div className="target-card">
+              <div className="target-icon">🛴</div>
+              <h3>Rolleresek</h3>
+              <p>
+                Elektromos roller tulajdonosok, akiknek ugyanúgy fontos a
+                biztonságos tárolás. Találj olyan helyeket, ahol a rollered is
+                védve van a lopásoktól.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="features">
         <div className="container">
