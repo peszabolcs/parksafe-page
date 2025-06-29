@@ -16,7 +16,8 @@ const isValidEmail = (email) => {
 const readEmails = async () => {
   try {
     const emails = await redis.get(EMAILS_KEY);
-    return emails || [];
+    // Redis returns null if key doesn't exist, ensure we return an array
+    return Array.isArray(emails) ? emails : [];
   } catch (error) {
     console.error('Error reading from Redis:', error);
     return [];
