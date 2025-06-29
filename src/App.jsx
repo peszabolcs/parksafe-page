@@ -52,7 +52,7 @@ function App() {
             <div className="phone-mockup">
               <div className="phone-screen">
                 <img
-                  src="/latvanytervek/phone.jpeg"
+                  src="/phone.jpeg"
                   alt="ParkSafe app mockup"
                   className="phone-screen-image"
                 />
