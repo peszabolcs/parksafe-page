@@ -1,7 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
+import EmailModal from "./EmailModal.jsx";
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   useEffect(() => {
     // Animated counter effect
     const animateCounter = (element, target, duration = 2000) => {
@@ -84,7 +90,7 @@ function App() {
                 <span className="stat-label">Érdeklődő</span>
               </div>
             </div>
-            <button className="cta-button">
+            <button className="cta-button" onClick={openModal}>
               🚀 Értesítést kérek az indulásról!
             </button>
             <p className="hero-subtext">
@@ -202,7 +208,7 @@ function App() {
               </div>
               <div className="benefit">✅ Korai hozzáférés új funkciókhoz</div>
             </div>
-            <button className="cta-button-white">
+            <button className="cta-button-white" onClick={openModal}>
               🎉 Igen, csatlakozom az első 1000 közé!
             </button>
             <p className="cta-countdown">
@@ -237,6 +243,8 @@ function App() {
           </div>
         </div>
       </footer>
+
+      <EmailModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }
