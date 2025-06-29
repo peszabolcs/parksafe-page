@@ -987,9 +987,64 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 24px;
+  }
+
+  .hero-container {
+    gap: 40px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .target-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  /* Header */
+  .header {
+    padding: 16px 0;
+  }
+
+  .header .container {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .logo-image {
+    width: 28px;
+    height: 28px;
+  }
+
+  .contact-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  /* Hero */
   .hero {
-    padding: 140px 0 60px;
+    padding: 120px 0 60px;
+    min-height: auto;
   }
 
   .hero-container {
@@ -999,33 +1054,59 @@
   }
 
   .hero-title {
-    font-size: 42px;
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 20px;
   }
 
-  .features-grid {
-    grid-template-columns: 1fr;
+  .hero-description {
+    font-size: 18px;
+    margin-bottom: 32px;
   }
 
   .hero-stats {
-    gap: 20px;
-  }
-
-  .footer-content {
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
+    margin: 24px 0;
   }
 
-  .header .container {
-    flex-direction: column;
-    gap: 16px;
+  .stat-number {
+    font-size: 24px;
   }
 
-  .cta-content h2 {
-    font-size: 36px;
+  .stat-label {
+    font-size: 13px;
   }
 
-  .features-header h2 {
+  .cta-button {
+    padding: 16px 28px;
+    font-size: 16px;
+  }
+
+  .hero-subtext {
+    font-size: 13px;
+  }
+
+  /* Phone mockup */
+  .phone-mockup {
+    max-width: 240px;
+  }
+
+  .phone-screen {
+    height: 480px;
+  }
+
+  /* Target Audience */
+  .target-audience {
+    padding: 60px 0;
+  }
+
+  .target-header h2 {
     font-size: 32px;
+  }
+
+  .target-header p {
+    font-size: 18px;
   }
 
   .target-grid {
@@ -1033,7 +1114,167 @@
     gap: 24px;
   }
 
-  .target-header h2 {
+  .target-card {
+    padding: 32px 24px;
+  }
+
+  .target-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+
+  .target-card h3 {
+    font-size: 20px;
+  }
+
+  .target-card p {
+    font-size: 15px;
+  }
+
+  /* Features */
+  .features {
+    padding: 60px 0;
+  }
+
+  .features-header h2 {
     font-size: 32px;
+  }
+
+  .features-header p {
+    font-size: 18px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .feature-card {
+    padding: 32px 24px;
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+  }
+
+  .feature-card p {
+    font-size: 15px;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    padding: 60px 0;
+  }
+
+  .cta-content h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .cta-content p {
+    font-size: 18px;
+    margin-bottom: 32px;
+  }
+
+  .cta-benefits {
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .benefit {
+    font-size: 15px;
+    text-align: center;
+  }
+
+  .cta-button-white {
+    padding: 16px 28px;
+    font-size: 16px;
+  }
+
+  .cta-countdown {
+    font-size: 13px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0 20px;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .footer-links a {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  .footer-bottom p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .hero-stats {
+    gap: 20px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .cta-button {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .phone-mockup {
+    max-width: 200px;
+  }
+
+  .phone-screen {
+    height: 400px;
+  }
+
+  .target-header h2,
+  .features-header h2,
+  .cta-content h2 {
+    font-size: 26px;
+  }
+
+  .target-card,
+  .feature-card {
+    padding: 24px 20px;
+  }
+
+  .cta-button-white {
+    padding: 14px 24px;
+    font-size: 15px;
   }
 }
