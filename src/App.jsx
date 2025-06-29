@@ -1,6 +1,43 @@
+import { useEffect } from "react";
 import "./App.css";
 
 function App() {
+  useEffect(() => {
+    // Animated counter effect
+    const animateCounter = (element, target, duration = 2000) => {
+      let startTime = null;
+      
+      const animate = (currentTime) => {
+        if (startTime === null) startTime = currentTime;
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(easeOutQuart * target);
+        
+        element.textContent = currentValue.toLocaleString() + '+';
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          element.textContent = target.toLocaleString() + '+';
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    };
+
+    // Start animation after a short delay
+    const timer = setTimeout(() => {
+      const counters = document.querySelectorAll('.stat-number[data-target]');
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        animateCounter(counter, target);
+      });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="app">
       {/* Header */}
@@ -24,21 +61,21 @@ function App() {
             </h1>
             <p className="hero-description">
               Találd meg a legjobb biciklitárolókat a környéken - biztonságos,
-              megbízható és közösség által ellenőrzött helyszínekkel. Több mint
-              10,000 tároló 50+ városban.
+              megbízható és közösség által ellenőrzött helyszínekkel. Már több mint
+              2500 helyszínt vizsgáltunk meg Magyarországon.
             </p>
             <div className="hero-stats">
               <div className="stat">
-                <span className="stat-number">10,000+</span>
-                <span className="stat-label">Tároló</span>
+                <span className="stat-number" data-target="2500">0+</span>
+                <span className="stat-label">Vizsgált Helyszín</span>
               </div>
               <div className="stat">
-                <span className="stat-number">50+</span>
+                <span className="stat-number" data-target="15">0+</span>
                 <span className="stat-label">Város</span>
               </div>
               <div className="stat">
-                <span className="stat-number">25,000+</span>
-                <span className="stat-label">Felhasználó</span>
+                <span className="stat-number" data-target="847">0+</span>
+                <span className="stat-label">Érdeklődő</span>
               </div>
             </div>
             <button className="cta-button">
@@ -68,8 +105,7 @@ function App() {
           <div className="features-header">
             <h2>Miért választják a biciklisek a ParkSafe-et?</h2>
             <p>
-              Több mint 25,000 elégedett felhasználó már megtalálta a tökéletes
-              tárolóhelyeket
+              Több mint 800 érdeklődő már regisztrált a korai hozzáférésért
             </p>
           </div>
           <div className="features-grid">
