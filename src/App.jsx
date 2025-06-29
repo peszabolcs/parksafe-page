@@ -51,10 +51,10 @@ function App() {
           <div className="hero-image">
             <div className="phone-mockup">
               <div className="phone-screen">
-                <img 
-                  src="/latvanytervek/phone.jpeg" 
-                  alt="ParkSafe app mockup" 
-                  className="phone-screen-image" 
+                <img
+                  src="/latvanytervek/phone.jpeg"
+                  alt="ParkSafe app mockup"
+                  className="phone-screen-image"
                 />
               </div>
             </div>
@@ -76,10 +76,7 @@ function App() {
             <div className="feature-card">
               <div className="feature-icon green">📍</div>
               <h3>Valós idejű elérhetőség</h3>
-              <p>
-                Lásd azonnal, mely tárolók szabad hellyel rendelkeznek. Foglalj
-                helyet egy kattintással és spórolj időt.
-              </p>
+              <p>Lásd azonnal, mely tárolók szabad hellyel rendelkeznek.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon blue">🛡️</div>
