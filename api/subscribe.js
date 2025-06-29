@@ -1,10 +1,9 @@
 // Vercel serverless function for email subscription
-// Simple file-based storage for demo purposes
+// Using Vercel KV for persistent storage
 
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { kv } from '@vercel/kv';
 
-const EMAILS_FILE = '/tmp/emails.json';
+const EMAILS_KEY = 'parksafe_emails';
 
 // Helper function to validate email
 const isValidEmail = (email) => {
@@ -12,20 +11,25 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// Helper function to read existing emails
+// Helper function to read existing emails from KV
 const readEmails = async () => {
   try {
-    const data = await readFile(EMAILS_FILE, 'utf8');
-    return JSON.parse(data);
+    const emails = await kv.get(EMAILS_KEY);
+    return emails || [];
   } catch (error) {
-    // File doesn't exist or is empty, return empty array
+    console.error('Error reading from KV:', error);
     return [];
   }
 };
 
-// Helper function to write emails
+// Helper function to write emails to KV
 const writeEmails = async (emails) => {
-  await writeFile(EMAILS_FILE, JSON.stringify(emails, null, 2));
+  try {
+    await kv.set(EMAILS_KEY, emails);
+  } catch (error) {
+    console.error('Error writing to KV:', error);
+    throw error;
+  }
 };
 
 export default async function handler(req, res) {
