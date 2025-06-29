@@ -1,15 +1,16 @@
 // Admin endpoint to view all emails
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis'
 
-const EMAILS_KEY = 'parksafe_emails';
+const redis = Redis.fromEnv()
+const EMAILS_KEY = 'parksafe_emails'
 
-// Helper function to read existing emails from KV
+// Helper function to read existing emails from Redis
 const readEmails = async () => {
   try {
-    const emails = await kv.get(EMAILS_KEY);
+    const emails = await redis.get(EMAILS_KEY);
     return emails || [];
   } catch (error) {
-    console.error('Error reading from KV:', error);
+    console.error('Error reading from Redis:', error);
     return [];
   }
 };

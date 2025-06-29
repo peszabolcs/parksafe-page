@@ -1,9 +1,10 @@
 // Vercel serverless function for email subscription
-// Using Vercel KV for persistent storage
+// Using Upstash Redis for persistent storage
 
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis'
 
-const EMAILS_KEY = 'parksafe_emails';
+const redis = Redis.fromEnv()
+const EMAILS_KEY = 'parksafe_emails'
 
 // Helper function to validate email
 const isValidEmail = (email) => {
@@ -11,23 +12,23 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// Helper function to read existing emails from KV
+// Helper function to read existing emails from Redis
 const readEmails = async () => {
   try {
-    const emails = await kv.get(EMAILS_KEY);
+    const emails = await redis.get(EMAILS_KEY);
     return emails || [];
   } catch (error) {
-    console.error('Error reading from KV:', error);
+    console.error('Error reading from Redis:', error);
     return [];
   }
 };
 
-// Helper function to write emails to KV
+// Helper function to write emails to Redis
 const writeEmails = async (emails) => {
   try {
-    await kv.set(EMAILS_KEY, emails);
+    await redis.set(EMAILS_KEY, emails);
   } catch (error) {
-    console.error('Error writing to KV:', error);
+    console.error('Error writing to Redis:', error);
     throw error;
   }
 };
