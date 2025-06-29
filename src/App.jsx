@@ -51,49 +51,11 @@ function App() {
           <div className="hero-image">
             <div className="phone-mockup">
               <div className="phone-screen">
-                <div className="phone-header">
-                  <div className="phone-status">
-                    <span className="time">9:41</span>
-                    <div className="phone-indicators">
-                      <span className="signal">📶</span>
-                      <span className="battery">🔋</span>
-                    </div>
-                  </div>
-                  <div className="app-header">
-                    <div className="app-title">
-                      <img
-                        src="/logo.png"
-                        alt="ParkSafe"
-                        className="phone-logo-image"
-                      />
-                      <span>ParkSafe</span>
-                    </div>
-                    <button className="filter-btn">🔍</button>
-                  </div>
-                </div>
-                <div className="phone-map">
-                  <div className="map-streets"></div>
-                  <div className="map-pins">
-                    <div className="pin pin-1">📍</div>
-                    <div className="pin pin-2">📍</div>
-                    <div className="pin pin-3">📍</div>
-                  </div>
-                  <button className="locate-btn">🎯</button>
-                </div>
-                <div className="phone-bottom">
-                  <div className="parking-card">
-                    <div className="card-header">
-                      <span className="parking-name">🚲 Mammut Parkoló</span>
-                      <span className="distance">120m</span>
-                    </div>
-                    <div className="card-details">
-                      <div className="rating">⭐ 4.8 • 24/7 • Fedett</div>
-                      <div className="availability">
-                        <span className="available">🟢 8/12 szabad hely</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <img 
+                  src="/latvanytervek/phone.jpeg" 
+                  alt="ParkSafe app mockup" 
+                  className="phone-screen-image" 
+                />
               </div>
             </div>
           </div>

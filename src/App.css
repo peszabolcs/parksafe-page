@@ -321,7 +321,7 @@
 
 /* Phone Mockup */
 .phone-mockup {
-  max-width: 320px;
+  max-width: 280px;
   margin: 0 auto;
   animation: fadeInRight 1s ease 0.8s both, float 3s ease-in-out infinite;
 }
@@ -348,16 +348,25 @@
 }
 
 .phone-screen {
-  background: white;
+  background: #1f2937;
   border: 8px solid #1f2937;
   border-radius: 40px;
-  padding: 25px;
+  padding: 4px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  height: 550px;
+  height: 580px;
+  width: 100%;
+  aspect-ratio: 9/19.5;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+}
+
+.phone-screen-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 32px;
 }
 
 .phone-screen::before {
