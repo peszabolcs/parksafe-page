@@ -35,7 +35,7 @@ function EmailModal({ isOpen, onClose }) {
         setStatus("error");
         setErrorMessage(data.error || "Hiba történt. Kérlek próbáld újra!");
       }
-    } catch (error) {
+    } catch {
       setStatus("error");
       setErrorMessage("Hálózati hiba. Ellenőrizd az internetkapcsolatot!");
     } finally {
