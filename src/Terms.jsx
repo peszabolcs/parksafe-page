@@ -190,7 +190,7 @@ function Terms() {
           <p>
             <strong>Hatályos:</strong> 2025. január 5-től
             <br />
-            <strong>Premiumtex Kft.</strong> • Zsombó, Dózsa dűlő 55. • •
+            <strong>Premiumtex Kft.</strong> • Zsombó, Dózsa dűlő 55. •
             perjesidev@gmail.com
           </p>
         </div>
