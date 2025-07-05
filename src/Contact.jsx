@@ -5,7 +5,7 @@ function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    message: ""
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState("");
@@ -13,7 +13,7 @@ function Contact() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -22,13 +22,21 @@ function Contact() {
     setIsSubmitting(true);
     setStatus("");
 
-    // Simulate form submission
     try {
-      // In a real app, this would send to your backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setStatus("success");
-      setFormData({ name: "", email: "", message: "" });
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
     } catch {
       setStatus("error");
     } finally {
@@ -41,7 +49,10 @@ function Contact() {
       <div className="container">
         <div className="contact-header">
           <h1>📧 Kapcsolat</h1>
-          <p>Van kérdésed, javaslatos vagy csak szeretnél beszélni velünk? Örülünk minden megkeresésnek!</p>
+          <p>
+            Van kérdésed, javaslatos vagy csak szeretnél beszélni velünk?
+            Örülünk minden megkeresésnek!
+          </p>
         </div>
 
         <div className="contact-content">
@@ -58,16 +69,22 @@ function Contact() {
               <div className="info-icon">🏢</div>
               <div className="info-details">
                 <h3>Cég</h3>
-                <p>ParkSafe Kft.<br />
-                1051 Budapest, Október 6. utca 12.</p>
+                <p>
+                  ParkSafe Kft.
+                  <br />
+                  1051 Budapest, Október 6. utca 12.
+                </p>
               </div>
             </div>
             <div className="info-item">
               <div className="info-icon">⏰</div>
               <div className="info-details">
                 <h3>Válaszidő</h3>
-                <p>24-48 órán belül válaszolunk<br />
-                minden megkeresésre</p>
+                <p>
+                  24-48 órán belül válaszolunk
+                  <br />
+                  minden megkeresésre
+                </p>
               </div>
             </div>
           </div>
@@ -129,36 +146,14 @@ function Contact() {
                 </div>
               )}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="submit-btn"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "🔄 Küldés..." : "📤 Üzenet küldése"}
               </button>
             </form>
-          </div>
-        </div>
-
-        <div className="contact-faq">
-          <h2>Gyakran ismételt kérdések</h2>
-          <div className="faq-grid">
-            <div className="faq-item">
-              <h3>🚀 Mikor indul el a ParkSafe?</h3>
-              <p>Jelenleg a fejlesztés utolsó fázisában vagyunk. Az alkalmazás 2025 tavaszán lesz elérhető.</p>
-            </div>
-            <div className="faq-item">
-              <h3>💰 Mennyibe fog kerülni?</h3>
-              <p>Az alapfunkciók ingyenesek lesznek. A prémium funkciókért havonta 990 Ft-ot tervezünk kérni.</p>
-            </div>
-            <div className="faq-item">
-              <h3>🏢 Vállalkozásoknak is elérhető?</h3>
-              <p>Igen! Készítünk vállalati csomagokat is kerékpár-megosztó cégeknek és városoknak.</p>
-            </div>
-            <div className="faq-item">
-              <h3>📱 Milyen eszközökön lesz elérhető?</h3>
-              <p>Android és iOS alkalmazást is készítünk, valamint webes felületen is elérhető lesz.</p>
-            </div>
           </div>
         </div>
       </div>
