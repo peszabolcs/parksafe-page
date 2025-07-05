@@ -14,7 +14,7 @@ function Terms() {
             <h2>1. Általános rendelkezések</h2>
             <p>
               Jelen Általános Szerződési Feltételek (a továbbiakban: ÁSZF) a
-              Premiumtex Kft. (székhely: 6792 Zsombó, Dózsa dűlő 55.,;
+              Premiumtex Kft. (székhely: 6792 Zsombó, Dózsa dűlő 55.;
               cégjegyzékszám: 06-09-013323; adószám: 14559253-2-06) által
               üzemeltetett ParkSafe alkalmazás és szolgáltatások használatára
               vonatkoznak.
