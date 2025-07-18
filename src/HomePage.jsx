@@ -62,13 +62,13 @@ function HomePage() {
             </p>
             <div className="hero-stats">
               <div className="stat">
-                <span className="stat-number" data-target="2500">
+                <span className="stat-number" data-target="7500">
                   0+
                 </span>
                 <span className="stat-label">Vizsgált Helyszín</span>
               </div>
               <div className="stat">
-                <span className="stat-number" data-target="15">
+                <span className="stat-number" data-target="200">
                   0+
                 </span>
                 <span className="stat-label">Város</span>
