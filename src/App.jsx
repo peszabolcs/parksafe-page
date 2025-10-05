@@ -11,6 +11,7 @@ import Privacy from "./Privacy.jsx";
 import Success from "./Success.jsx";
 import Error from "./Error.jsx";
 import EmailChangeSuccess from "./EmailChangeSuccess.jsx";
+import PasswordReset from "./PasswordReset.jsx";
 import Login from "./Login.jsx";
 import Profile from "./Profile.jsx";
 import Admin from "./Admin.jsx";
@@ -21,8 +22,18 @@ function AuthRedirectHandler() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if we have auth tokens in the URL hash
-    if (location.hash && location.hash.includes('access_token=')) {
+    const hash = location.hash;
+
+    // Check if this is a password recovery/reset
+    if (hash.includes('type=recovery')) {
+      setTimeout(() => {
+        navigate('/password-reset', { replace: true });
+      }, 100);
+      return;
+    }
+
+    // Check if we have auth tokens in the URL hash (regular login)
+    if (hash && hash.includes('access_token=')) {
       // Clear the hash from URL and let Supabase auth state listener handle it
       // The AuthContext will pick up the session change
       setTimeout(() => {
@@ -67,6 +78,7 @@ function App() {
             <Route path="/success" element={<Success />} />
             <Route path="/error" element={<Error />} />
             <Route path="/email-change-success" element={<EmailChangeSuccess />} />
+            <Route path="/password-reset" element={<PasswordReset />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
