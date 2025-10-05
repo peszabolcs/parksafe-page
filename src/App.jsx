@@ -10,6 +10,7 @@ import Terms from "./Terms.jsx";
 import Privacy from "./Privacy.jsx";
 import Success from "./Success.jsx";
 import Error from "./Error.jsx";
+import EmailChangeSuccess from "./EmailChangeSuccess.jsx";
 import Login from "./Login.jsx";
 import Profile from "./Profile.jsx";
 import Admin from "./Admin.jsx";
@@ -65,6 +66,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/success" element={<Success />} />
             <Route path="/error" element={<Error />} />
+            <Route path="/email-change-success" element={<EmailChangeSuccess />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
