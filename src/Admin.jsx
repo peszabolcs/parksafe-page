@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { supabase } from './lib/supabaseClient';
+import AddLocationModal from './AddLocationModal';
+import EditLocationModal from './EditLocationModal';
 import './Admin.css';
+import { lockScroll, unlockScroll } from './utils/modalLock';
+import ImagePreview from './components/ImagePreview';
 
 function Admin() {
   const { user, loading } = useAuth();
@@ -27,6 +31,20 @@ function Admin() {
   const [totalCount, setTotalCount] = useState(0);
   const [toggleLoading, setToggleLoading] = useState(null); // Track which item is being toggled
   const [detailModal, setDetailModal] = useState({ show: false, item: null, type: null });
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [addLocationModal, setAddLocationModal] = useState(false);
+  const [editLocationModal, setEditLocationModal] = useState({ show: false, item: null });
+
+  // Lock body scroll whenever any top-level modal is open
+  useEffect(() => {
+    const anyOpen = detailModal.show || addLocationModal || editLocationModal.show || showModal;
+    if (anyOpen) {
+      lockScroll();
+      return () => unlockScroll();
+    }
+    // ensure unlock when none are open
+    unlockScroll();
+  }, [detailModal.show, addLocationModal, editLocationModal.show, showModal]);
 
   useEffect(() => {
     // Check if user is admin
@@ -214,6 +232,8 @@ function Admin() {
   }, [activeTab, searchTerm]);
 
   const [deleteModal, setDeleteModal] = useState({ show: false, table: null, id: null });
+  const [userDetail, setUserDetail] = useState({ show: false, user: null });
+  const [userDeleteModal, setUserDeleteModal] = useState({ show: false, user: null });
 
   const handleDeleteClick = (table, id) => {
     setDeleteModal({ show: true, table, id });
@@ -224,12 +244,39 @@ function Admin() {
     setDeleteModal({ show: false, table: null, id: null });
 
     try {
+      // Fetch picture_url before delete so we can clean up storage
+      const { data: record, error: fetchErr } = await supabase
+        .from(table)
+        .select('id, picture_url')
+        .eq('id', id)
+        .single();
+      if (fetchErr) throw fetchErr;
+
       const { error } = await supabase
         .from(table)
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+
+      // Remove related images from storage bucket (best-effort)
+      if (record?.picture_url && Array.isArray(record.picture_url) && record.picture_url.length > 0) {
+        const paths = [];
+        for (const url of record.picture_url) {
+          const parts = String(url).split('/location-images/');
+          if (parts.length === 2) paths.push(parts[1]);
+        }
+        if (paths.length > 0) {
+          try {
+            const { error: removeErr } = await supabase.storage
+              .from('location-images')
+              .remove(paths);
+            if (removeErr) console.warn('Storage cleanup error:', removeErr.message);
+          } catch (e) {
+            console.warn('Storage cleanup exception:', e);
+          }
+        }
+      }
 
       // Refetch data from server to update counts and pagination
       if (activeTab === 'users') {
@@ -255,6 +302,32 @@ function Admin() {
 
   const closeDetailModal = () => {
     setDetailModal({ show: false, item: null, type: null });
+  };
+
+  const handleAddLocation = () => {
+    setAddLocationModal(true);
+  };
+
+  const closeAddLocationModal = () => {
+    setAddLocationModal(false);
+  };
+
+  const handleLocationAdded = async () => {
+    // Refresh the data after adding a new location
+    await fetchAllData();
+  };
+
+  const handleEditLocation = (item) => {
+    setEditLocationModal({ show: true, item });
+  };
+
+  const closeEditLocationModal = () => {
+    setEditLocationModal({ show: false, item: null });
+  };
+
+  const handleLocationUpdated = async () => {
+    // Refresh the data after updating a location
+    await fetchAllData();
   };
 
   // Parse PostGIS WKB format to extract lat/lon
@@ -459,7 +532,7 @@ function Admin() {
   if (loading || !profile) {
     return (
       <div className="admin-page">
-        <div className="admin-loading">Betöltés...</div>
+        <div className="admin-loading"><span className="spinner" /></div>
       </div>
     );
   }
@@ -578,6 +651,14 @@ function Admin() {
                 </button>
               )}
             </div>
+            {activeTab !== 'users' && (
+              <button className="btn-add-location" onClick={handleAddLocation}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Új hozzáadása
+              </button>
+            )}
             <div className="stat-badge">
               <span className="stat-value">{totalCount}</span>
               <span className="stat-label">
@@ -651,7 +732,7 @@ function Admin() {
                     </thead>
                     <tbody>
                       {users.map((user) => (
-                        <tr key={user.id}>
+                        <tr key={user.id} className="clickable-row" onClick={() => setUserDetail({ show: true, user })}>
                           <td>
                             <div className="user-avatar">
                               {user.avatar_url ? (
@@ -844,6 +925,18 @@ function Admin() {
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  handleEditLocation(spot);
+                                }}
+                                className="btn-edit"
+                                title="Szerkesztés"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   handleToggleAvailability('parkingSpots', spot.id, spot.available);
                                 }}
                                 className={`btn-toggle ${spot.available ? 'active' : 'inactive'} ${toggleLoading === spot.id ? 'loading' : ''}`}
@@ -1021,6 +1114,18 @@ function Admin() {
                           </td>
                           <td onClick={(e) => e.stopPropagation()}>
                             <div className="action-buttons">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditLocation(service);
+                                }}
+                                className="btn-edit"
+                                title="Szerkesztés"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -1217,6 +1322,18 @@ function Admin() {
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  handleEditLocation(station);
+                                }}
+                                className="btn-edit"
+                                title="Szerkesztés"
+                              >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   handleToggleAvailability('repairStation', station.id, station.available);
                                 }}
                                 className={`btn-toggle ${station.available ? 'active' : 'inactive'} ${toggleLoading === station.id ? 'loading' : ''}`}
@@ -1353,15 +1470,84 @@ function Admin() {
         </div>
       )}
 
+      {userDetail.show && userDetail.user && (
+        <div className="modal-overlay" onClick={() => setUserDetail({ show: false, user: null })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Felhasználó részletei</h3>
+            </div>
+            <div className="modal-body" style={{ textAlign: 'left' }}>
+              <p><strong>Felhasználónév:</strong> {userDetail.user.username || '—'}</p>
+              <p><strong>Email:</strong> {userDetail.user.email}</p>
+              <p><strong>Szerepkör:</strong> {userDetail.user.role}</p>
+              {userDetail.user.full_name && <p><strong>Név:</strong> {userDetail.user.full_name}</p>}
+              {userDetail.user.phone && <p><strong>Telefon:</strong> {userDetail.user.phone}</p>}
+              {userDetail.user.created_at && (
+                <p><strong>Regisztráció:</strong> {new Date(userDetail.user.created_at).toLocaleString('hu-HU')}</p>
+              )}
+              {userDetail.user.updated_at && (
+                <p><strong>Frissítve:</strong> {new Date(userDetail.user.updated_at).toLocaleString('hu-HU')}</p>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setUserDetail({ show: false, user: null })}>Bezárás</button>
+              <button className="btn-confirm-delete" onClick={() => setUserDeleteModal({ show: true, user: userDetail.user })}>Felhasználó törlése</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {userDeleteModal.show && userDeleteModal.user && (
+        <div className="modal-overlay" onClick={() => setUserDeleteModal({ show: false, user: null })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Biztosan törlöd a felhasználót?</h3>
+            </div>
+            <div className="modal-body">
+              <p>{userDeleteModal.user.email}</p>
+              <p className="modal-warning">Ez a művelet nem vonható vissza.</p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setUserDeleteModal({ show: false, user: null })}>Mégse</button>
+              <button className="btn-confirm-delete" onClick={async () => {
+                try {
+                  const { error } = await supabase.from('profiles').delete().eq('id', userDeleteModal.user.id);
+                  if (error) throw error;
+                  setUserDeleteModal({ show: false, user: null });
+                  setUserDetail({ show: false, user: null });
+                  await fetchAllData();
+                } catch (err) {
+                  alert('Hiba a felhasználó törlése közben: ' + (err.message || 'Ismeretlen hiba'));
+                }
+              }}>Törlés</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Detail View Modal */}
       {detailModal.show && detailModal.item && (
         <div className="modal-overlay" onClick={closeDetailModal}>
-          <div className="detail-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="detail-modal-content" key={detailModal.item.id} onClick={(e) => e.stopPropagation()}>
             <div className="detail-modal-header">
-              <div>
+              <div className="detail-header-left">
                 <h2>{detailModal.item.name}</h2>
                 <span className={`status-badge ${detailModal.item.available ? 'active' : 'inactive'}`}>
-                  {detailModal.item.available ? '✓ Aktív' : '✗ Inaktív'}
+                  {detailModal.item.available ? (
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', marginRight: '4px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Aktív
+                    </>
+                  ) : (
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', marginRight: '4px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      Inaktív
+                    </>
+                  )}
                 </span>
               </div>
               <button className="close-btn" onClick={closeDetailModal}>
@@ -1372,22 +1558,64 @@ function Admin() {
             </div>
 
             <div className="detail-modal-body">
+              {/* Image Gallery */}
+              {detailModal.item.picture_url && detailModal.item.picture_url.length > 0 && (
+                <div className="detail-section">
+                  <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '20px', height: '20px', display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Képek ({detailModal.item.picture_url.length})
+                  </h3>
+                  <div className="detail-image-gallery">
+                    {detailModal.item.picture_url.map((url, index) => (
+                      <div
+                        key={index}
+                        className="detail-image-item"
+                        onClick={() => setImagePreviewUrl(url)}
+                        title="Kattints a nagyításhoz"
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <img src={url} alt={`${detailModal.item.name} - ${index + 1}`} />
+                        <div className="detail-image-number">{index + 1}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="detail-section">
                 <h3>Alapadatok</h3>
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <span className="detail-label">📍 Város</span>
+                    <span className="detail-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Város
+                    </span>
                     <span className="detail-value">{detailModal.item.city}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">📝 Leírás</span>
+                    <span className="detail-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Leírás
+                    </span>
                     <span className="detail-value">{detailModal.item.description || 'Nincs leírás'}</span>
                   </div>
                   
                   {/* Parking specific fields */}
                   {detailModal.type === 'parking' && detailModal.item.covered !== undefined && (
                     <div className="detail-item">
-                      <span className="detail-label">🏠 Fedett</span>
+                      <span className="detail-label">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Fedett
+                      </span>
                       <span className="detail-value">{detailModal.item.covered ? 'Igen' : 'Nem'}</span>
                     </div>
                   )}
@@ -1397,13 +1625,23 @@ function Admin() {
                     <>
                       {detailModal.item.covered !== undefined && (
                         <div className="detail-item">
-                          <span className="detail-label">🏠 Fedett</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Fedett
+                          </span>
                           <span className="detail-value">{detailModal.item.covered ? 'Igen' : 'Nem'}</span>
                         </div>
                       )}
                       {detailModal.item.free !== undefined && (
                         <div className="detail-item">
-                          <span className="detail-label">💰 Ingyenes</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Ingyenes
+                          </span>
                           <span className="detail-value">{detailModal.item.free ? 'Igen' : 'Nem'}</span>
                         </div>
                       )}
@@ -1415,13 +1653,23 @@ function Admin() {
                     <>
                       {detailModal.item.phone && (
                         <div className="detail-item">
-                          <span className="detail-label">📞 Telefonszám</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            Telefonszám
+                          </span>
                           <span className="detail-value">{detailModal.item.phone}</span>
                         </div>
                       )}
                       {detailModal.item.website && (
                         <div className="detail-item">
-                          <span className="detail-label">🌐 Weboldal</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                            Weboldal
+                          </span>
                           <span className="detail-value">
                             <a href={detailModal.item.website} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6' }}>
                               {detailModal.item.website}
@@ -1431,19 +1679,34 @@ function Admin() {
                       )}
                       {detailModal.item.opening_hours && (
                         <div className="detail-item">
-                          <span className="detail-label">🕐 Nyitvatartás</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Nyitvatartás
+                          </span>
                           <span className="detail-value">{detailModal.item.opening_hours}</span>
                         </div>
                       )}
                       {detailModal.item.rating && (
                         <div className="detail-item">
-                          <span className="detail-label">⭐ Értékelés</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                            </svg>
+                            Értékelés
+                          </span>
                           <span className="detail-value">{detailModal.item.rating} / 5</span>
                         </div>
                       )}
                       {detailModal.item.price_range && (
                         <div className="detail-item">
-                          <span className="detail-label">💵 Árkategória</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Árkategória
+                          </span>
                           <span className="detail-value">{detailModal.item.price_range}</span>
                         </div>
                       )}
@@ -1460,18 +1723,33 @@ function Admin() {
                       <h3>Koordináták</h3>
                       <div className="detail-grid">
                         <div className="detail-item">
-                          <span className="detail-label">🌐 Szélesség (Latitude)</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                            Szélesség (Latitude)
+                          </span>
                           <span className="detail-value">{coords.lat.toFixed(6)}</span>
                         </div>
                         <div className="detail-item">
-                          <span className="detail-label">🌐 Hosszúság (Longitude)</span>
+                          <span className="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                            Hosszúság (Longitude)
+                          </span>
                           <span className="detail-value">{coords.lon.toFixed(6)}</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="detail-section">
-                      <h3>Térkép</h3>
+                      <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '20px', height: '20px', display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                        </svg>
+                        Térkép
+                      </h3>
                       <div className="map-container">
                         <iframe
                           width="100%"
@@ -1489,7 +1767,10 @@ function Admin() {
                             rel="noopener noreferrer"
                             className="map-link"
                           >
-                            🗺️ Megnyitás Google Maps-en
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '16px', height: '16px', marginRight: '6px' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                            Megnyitás Google Maps-en
                           </a>
                         </div>
                       </div>
@@ -1510,11 +1791,21 @@ function Admin() {
                 <h3>Adatbázis információk</h3>
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <span className="detail-label">🆔 ID</span>
+                    <span className="detail-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                      </svg>
+                      ID
+                    </span>
                     <span className="detail-value small">{detailModal.item.id}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">📅 Létrehozva</span>
+                    <span className="detail-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Létrehozva
+                    </span>
                     <span className="detail-value">
                       {new Date(detailModal.item.created_at).toLocaleDateString('hu-HU', {
                         year: 'numeric',
@@ -1526,7 +1817,12 @@ function Admin() {
                     </span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">🔄 Módosítva</span>
+                    <span className="detail-label">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ width: '14px', height: '14px', display: 'inline-block', marginRight: '6px' }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Módosítva
+                    </span>
                     <span className="detail-value">
                       {new Date(detailModal.item.updated_at).toLocaleDateString('hu-HU', {
                         year: 'numeric',
@@ -1547,8 +1843,28 @@ function Admin() {
               </button>
             </div>
           </div>
+          {imagePreviewUrl && (
+            <ImagePreview src={imagePreviewUrl} alt="Előnézet" onClose={() => setImagePreviewUrl(null)} />
+          )}
         </div>
       )}
+
+      {/* Add Location Modal */}
+      <AddLocationModal
+        isOpen={addLocationModal}
+        onClose={closeAddLocationModal}
+        locationType={activeTab}
+        onSuccess={handleLocationAdded}
+      />
+
+      {/* Edit Location Modal */}
+      <EditLocationModal
+        isOpen={editLocationModal.show}
+        onClose={closeEditLocationModal}
+        locationType={activeTab}
+        item={editLocationModal.item}
+        onSuccess={handleLocationUpdated}
+      />
     </div>
   );
 }

@@ -81,8 +81,8 @@ function Profile() {
   if (loading || profileLoading) {
     return (
       <div className="profile-page">
-        <div className="profile-container">
-          <div className="loading-spinner">Betöltés...</div>
+        <div className="profile-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh' }}>
+          <div className="spinner" />
         </div>
       </div>
     );
@@ -113,7 +113,7 @@ function Profile() {
             )}
           </div>
           <h1>Profil</h1>
-          <p className="welcome-text">Üdvözlünk vissza!</p>
+  
           {isAdmin && (
             <div className="admin-badge">
               <svg className="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">

@@ -1,0 +1,277 @@
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import ImagePreview from './components/ImagePreview';
+import { supabase } from './lib/supabaseClient';
+import { Image, Plus, X, AlertTriangle, Info, Loader2 } from 'lucide-react';
+import './ImageUpload.css';
+
+const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onChange, locationType, locationId = null }, ref) {
+  const [images, setImages] = useState(existingImages);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [pendingFiles, setPendingFiles] = useState([]); // files waiting for location id
+
+  // Generate unique filename
+  const generateFileName = (file) => {
+    const timestamp = Date.now();
+    const randomStr = Math.random().toString(36).substring(2, 15);
+    const extension = file.name.split('.').pop();
+    
+    // Include locationId in filename if available
+    if (locationId) {
+      return `${locationType}_${locationId}_${timestamp}_${randomStr}.${extension}`;
+    }
+    
+    // Fallback for new locations without ID yet
+    return `${locationType}_${timestamp}_${randomStr}.${extension}`;
+  };
+
+  // Upload image to Supabase Storage
+  const uploadImage = async (file, forcedLocationId = null) => {
+    const effectiveId = forcedLocationId || locationId;
+    const fileName = effectiveId ? `${locationType}_${effectiveId}_${Date.now()}_${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}` : generateFileName(file);
+    const filePath = `${locationType}/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('location-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('location-images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
+  // Keep internal state in sync with parent when switching records quickly
+  useEffect(() => {
+    setImages(existingImages || []);
+  }, [existingImages, locationId, locationType]);
+
+  // Handle file selection
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    const newImageUrls = [];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validate file
+        if (!file.type.startsWith('image/')) {
+          alert(`${file.name} nem kép fájl!`);
+          continue;
+        }
+
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`${file.name} túl nagy! Maximum 5MB lehet.`);
+          continue;
+        }
+
+        if (!locationId) {
+          // Stage files for later upload when id is available; show preview
+          const preview = URL.createObjectURL(file);
+          newImageUrls.push(preview);
+          setPendingFiles(prev => [...prev, file]);
+        } else {
+          setUploading(true);
+          setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
+          try {
+            const url = await uploadImage(file);
+            newImageUrls.push(url);
+            setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+          } catch (error) {
+            console.error(`Error uploading ${file.name}:`, error);
+            alert(`Hiba ${file.name} feltöltése során: ${error.message}`);
+          } finally {
+            setUploading(false);
+          }
+        }
+      }
+
+      // Update images array
+      const updatedImages = [...images, ...newImageUrls];
+      setImages(updatedImages);
+      if (locationId) onChange(updatedImages);
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Hiba a képek feltöltése során');
+    } finally {
+      setUploadProgress({});
+      // Reset file input
+      e.target.value = '';
+    }
+  };
+
+  // Delete image
+  const handleDeleteImage = async (imageUrl, index) => {
+    if (!confirm('Biztosan törölni szeretnéd ezt a képet?')) {
+      return;
+    }
+
+    try {
+      // Extract file path from URL
+      const urlParts = imageUrl.split('/location-images/');
+      if (urlParts.length === 2) {
+        const filePath = urlParts[1];
+        
+        // Delete from storage
+        const { error } = await supabase.storage
+          .from('location-images')
+          .remove([filePath]);
+
+        if (error) {
+          console.error('Delete error:', error);
+          // Continue anyway - file might not exist
+        }
+      }
+
+      // Remove from array
+      const updatedImages = images.filter((_, i) => i !== index);
+      setImages(updatedImages);
+      onChange(updatedImages);
+
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Hiba a kép törlése során');
+    }
+  };
+
+  // Expose method for parent to upload pending files once an id is known
+  useImperativeHandle(ref, () => ({
+    async uploadPending(withLocationId) {
+      if (!pendingFiles.length) return [];
+      const uploaded = [];
+      try {
+        setUploading(true);
+        for (let i = 0; i < pendingFiles.length; i++) {
+          const file = pendingFiles[i];
+          setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
+          const url = await uploadImage(file, withLocationId);
+          uploaded.push(url);
+          setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+        }
+        const updated = images
+          .filter(u => !u.startsWith('blob:'))
+          .concat(uploaded);
+        setImages(updated);
+        onChange(updated);
+        setPendingFiles([]);
+        return uploaded;
+      } finally {
+        setUploading(false);
+        setUploadProgress({});
+      }
+    }
+  }));
+
+  return (
+    <div className="image-upload-container">
+      <label className="image-upload-label">
+        <Image size={16} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
+        Képek ({images.length})
+        {images.length < 10 && (
+          <span className="image-upload-hint"> - Maximum 10 kép tölthető fel</span>
+        )}
+      </label>
+
+      {/* Image Grid */}
+      {images.length > 0 && (
+        <div className="image-grid">
+          {images.map((url, index) => (
+            <div key={index} className="image-item" onClick={() => setPreviewUrl(url)} style={{ cursor: 'pointer' }}>
+              <img src={url} alt={`Kép ${index + 1}`} />
+              <button
+                type="button"
+                className="image-delete-btn"
+                onClick={(e) => { e.stopPropagation(); handleDeleteImage(url, index); }}
+                title="Törlés"
+              >
+                <X size={16} />
+              </button>
+              <div className="image-number">{index + 1}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {previewUrl && (
+        <ImagePreview src={previewUrl} alt="Előnézet" onClose={() => setPreviewUrl(null)} />
+      )}
+
+      {/* Upload Progress */}
+      {Object.keys(uploadProgress).length > 0 && (
+        <div className="upload-progress-container">
+          {Object.entries(uploadProgress).map(([name, progress]) => (
+            <div key={name} className="upload-progress-item">
+              <span className="upload-filename">{name}</span>
+              <div className="upload-progress-bar">
+                <div 
+                  className="upload-progress-fill" 
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span className="upload-percentage">{progress}%</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload Button */}
+      {images.length < 10 && (
+        <div className="image-upload-actions">
+          <label className="image-upload-btn" htmlFor="image-upload-input">
+            {uploading ? (
+              <>
+                <Loader2 size={20} style={{ animation: 'spin 1s linear infinite' }} />
+                Feltöltés...
+              </>
+            ) : (
+              <>
+                <Plus size={20} />
+                Képek hozzáadása
+              </>
+            )}
+          </label>
+          <input
+            id="image-upload-input"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileSelect}
+            disabled={uploading}
+            style={{ display: 'none' }}
+          />
+        </div>
+      )}
+
+      {images.length >= 10 && (
+        <p className="image-limit-message">
+          <AlertTriangle size={16} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
+          Elérted a maximum 10 kép limitet
+        </p>
+      )}
+
+      <div className="image-upload-info">
+        <Info size={14} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
+        Megengedett formátumok: JPG, PNG, GIF, WebP | Maximum méret: 5MB képenként
+      </div>
+    </div>
+  );
+});
+
+export default ImageUpload;
+
