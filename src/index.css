@@ -117,4 +117,64 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Force dark mode for admin panel */
+  .admin-dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.646 0.222 142.495); /* Green accent */
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.646 0.222 142.495); /* Green ring */
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.646 0.222 142.495); /* Green primary */
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.646 0.222 142.495); /* Green ring */
+  }
+
+  /* Custom sidebar styling for admin panel */
+  .admin-dark .sidebar {
+    background: oklch(0.205 0 0);
+    border-color: oklch(1 0 0 / 10%);
+  }
+
+  .admin-dark .sidebar [data-sidebar="menu-button"] {
+    transition: all 0.2s ease;
+  }
+
+  .admin-dark .sidebar [data-sidebar="menu-button"]:hover {
+    background: oklch(0.269 0 0);
+    color: oklch(0.985 0 0);
+  }
+
+  .admin-dark .sidebar [data-sidebar="menu-button"][data-active="true"] {
+    background: oklch(0.646 0.222 142.495);
+    color: oklch(0.985 0 0);
+    font-weight: 600;
+    box-shadow: 0 4px 12px oklch(0.646 0.222 142.495 / 0.3);
+  }
+
+  .admin-dark .sidebar [data-sidebar="group-label"] {
+    color: oklch(0.708 0 0);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 }
