@@ -423,4 +423,92 @@
   body:has(.admin-dark) [role="menuitem"].text-destructive:hover svg {
     color: oklch(0.704 0.191 22.216) !important;
   }
+
+  /* Fix button hover effects in dialogs and portaled content */
+  .admin-dark button[data-slot="button"],
+  .admin-dark button,
+  body:has(.admin-dark) button {
+    transition: all 0.2s ease !important;
+  }
+
+  .admin-dark button[data-slot="button"]:hover,
+  .admin-dark button:hover,
+  body:has(.admin-dark) button:hover {
+    transform: translateY(-1px) !important;
+  }
+
+  /* Specific button variant hover effects */
+  .admin-dark button[data-variant="outline"]:hover,
+  .admin-dark .btn-outline:hover,
+  body:has(.admin-dark) button[data-variant="outline"]:hover {
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 15%) !important;
+  }
+
+  /* Override any conflicting background rules for buttons */
+  .admin-dark [role="dialog"] button,
+  body:has(.admin-dark) [role="dialog"] button {
+    background-color: transparent !important;
+  }
+
+  .admin-dark [role="dialog"] button:hover,
+  body:has(.admin-dark) [role="dialog"] button:hover {
+    background-color: oklch(0.269 0 0) !important;
+  }
+
+  /* Make the Edit (Szerkesztés) button green - more specific targeting */
+  .admin-dark button[class*="bg-primary"]:not([role="checkbox"]),
+  .admin-dark [role="dialog"] button[class*="bg-primary"]:not([role="checkbox"]),
+  body:has(.admin-dark) button[class*="bg-primary"]:not([role="checkbox"]) {
+    background-color: oklch(0.646 0.222 142.495 / 0.2) !important;
+    border-color: oklch(0.646 0.222 142.495 / 0.3) !important;
+    color: oklch(0.646 0.222 142.495) !important;
+  }
+
+  .admin-dark button[class*="bg-primary"]:not([role="checkbox"]):hover,
+  .admin-dark [role="dialog"] button[class*="bg-primary"]:not([role="checkbox"]):hover,
+  body:has(.admin-dark) button[class*="bg-primary"]:not([role="checkbox"]):hover {
+    background-color: oklch(0.646 0.222 142.495 / 0.3) !important;
+    border-color: oklch(0.646 0.222 142.495 / 0.5) !important;
+    color: oklch(0.985 0 0) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Keep checkboxes with their default styling */
+  .admin-dark [role="checkbox"],
+  .admin-dark input[type="checkbox"],
+  .admin-dark [data-state="unchecked"],
+  body:has(.admin-dark) [role="checkbox"],
+  body:has(.admin-dark) input[type="checkbox"],
+  body:has(.admin-dark) [data-state="unchecked"] {
+    background-color: transparent !important;
+    border-color: oklch(0.708 0 0) !important;
+  }
+
+  /* Make selected/checked checkboxes green */
+  .admin-dark [role="checkbox"]:checked,
+  .admin-dark input[type="checkbox"]:checked,
+  .admin-dark [data-state="checked"],
+  .admin-dark [aria-checked="true"],
+  body:has(.admin-dark) [role="checkbox"]:checked,
+  body:has(.admin-dark) input[type="checkbox"]:checked,
+  body:has(.admin-dark) [data-state="checked"],
+  body:has(.admin-dark) [aria-checked="true"] {
+    background-color: oklch(0.646 0.222 142.495) !important;
+    border-color: oklch(0.646 0.222 142.495) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Target shadcn checkbox component specifically */
+  .admin-dark button[role="checkbox"][data-state="checked"],
+  body:has(.admin-dark) button[role="checkbox"][data-state="checked"] {
+    background-color: oklch(0.646 0.222 142.495) !important;
+    border-color: oklch(0.646 0.222 142.495) !important;
+  }
+
+  .admin-dark button[role="checkbox"][data-state="checked"] svg,
+  body:has(.admin-dark) button[role="checkbox"][data-state="checked"] svg {
+    color: oklch(0.985 0 0) !important;
+  }
 }
