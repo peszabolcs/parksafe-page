@@ -385,6 +385,25 @@
     color: oklch(0.985 0 0) !important;
   }
 
+  /* Ensure tables fill the card completely */
+  .admin-dark .bg-card.border-border table {
+    border-radius: 0 !important;
+  }
+
+  /* Remove any margin/padding that creates gaps */
+  .admin-dark .bg-card.border-border > div > div {
+    margin: 0 !important;
+  }
+
+  /* Ensure first and last table elements fit card borders */
+  .admin-dark table thead tr:first-child th:first-child {
+    border-top-left-radius: calc(var(--radius) - 2px);
+  }
+
+  .admin-dark table thead tr:first-child th:last-child {
+    border-top-right-radius: calc(var(--radius) - 2px);
+  }
+
   /* Make ONLY trash/delete menu items red - more specific targeting */
   .admin-dark [role="menuitem"].text-destructive,
   .admin-dark [role="menuitem"].text-destructive svg,

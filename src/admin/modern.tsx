@@ -1033,11 +1033,11 @@ function ModernAdmin() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="bg-card border-border">
-            <CardContent className="p-0">
+          <Card className="bg-card border-border overflow-hidden">
+            <CardContent className="p-0 m-0">
               {/* Users Table */}
               {activeTab === 'users' && (
-                <div className="rounded-lg border border-border bg-card max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
+                <div className="max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
                   {/* Table Header with Bulk Actions */}
                   {selectedRows.size > 0 && (
                     <div className="flex items-center justify-between p-4 bg-primary/10 border-b border-border">
@@ -1216,7 +1216,7 @@ function ModernAdmin() {
 
               {/* Parking Spots Table */}
               {activeTab === 'parking' && (
-                <div className="rounded-lg border border-border bg-card max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
+                <div className="max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
                   {/* Table Header with Bulk Actions */}
                   {selectedRows.size > 0 && (
                     <div className="flex items-center justify-between p-4 bg-primary/10 border-b border-border">
@@ -1453,7 +1453,7 @@ function ModernAdmin() {
 
               {/* Services Table */}
               {activeTab === 'services' && (
-                <div className="rounded-lg border border-border bg-card max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
+                <div className="max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
                   {/* Table Header with Bulk Actions */}
                   {selectedRows.size > 0 && (
                     <div className="flex items-center justify-between p-4 bg-primary/10 border-b border-border">
@@ -1682,7 +1682,7 @@ function ModernAdmin() {
 
               {/* Repair Stations Table */}
               {activeTab === 'repair' && (
-                <div className="rounded-lg border border-border bg-card max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
+                <div className="max-h-[calc(100vh-300px)] overflow-hidden flex flex-col">
                   {/* Table Header with Bulk Actions */}
                   {selectedRows.size > 0 && (
                     <div className="flex items-center justify-between p-4 bg-primary/10 border-b border-border">
@@ -1936,7 +1936,7 @@ function ModernAdmin() {
 
               {/* Modern Pagination */}
               {totalCount > pageSize && (
-                <div className="mt-6">
+                <div>
                   <Separator className="bg-border" />
                   <div className="flex items-center justify-between p-4">
                     {/* Page Info */}
