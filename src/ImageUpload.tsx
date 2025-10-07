@@ -1,18 +1,21 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import ImagePreview from './components/ImagePreview';
 import { supabase } from './lib/supabaseClient';
-import { Image, Plus, X, AlertTriangle, Info, Loader2 } from 'lucide-react';
+import { Image, Plus, X, AlertTriangle, Info, Loader2, GripVertical } from 'lucide-react';
 import './ImageUpload.css';
+import { ImageUploadProps } from './types';
 
-const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onChange, locationType, locationId = null }, ref) {
-  const [images, setImages] = useState(existingImages);
+const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ existingImages = [], onChange, locationType, locationId = null }, ref) {
+  const [images, setImages] = useState<string[]>(existingImages);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [pendingFiles, setPendingFiles] = useState([]); // files waiting for location id
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]); // files waiting for location id
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   // Generate unique filename
-  const generateFileName = (file) => {
+  const generateFileName = (file: File): string => {
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 15);
     const extension = file.name.split('.').pop();
@@ -27,7 +30,7 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
   };
 
   // Upload image to Supabase Storage
-  const uploadImage = async (file, forcedLocationId = null) => {
+  const uploadImage = async (file: File, forcedLocationId: string | null = null): Promise<string | null> => {
     const effectiveId = forcedLocationId || locationId;
     const fileName = effectiveId ? `${locationType}_${effectiveId}_${Date.now()}_${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}` : generateFileName(file);
     const filePath = `${locationType}/${fileName}`;
@@ -58,11 +61,11 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
   }, [existingImages, locationId, locationType]);
 
   // Handle file selection
-  const handleFileSelect = async (e) => {
-    const files = Array.from(e.target.files);
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const newImageUrls = [];
+    const newImageUrls: string[] = [];
 
     try {
       for (let i = 0; i < files.length; i++) {
@@ -116,8 +119,57 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
     }
   };
 
+  // Handle drag start
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // Handle drag over
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  // Handle drag leave
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  // Handle drop
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newImages = [...images];
+    const draggedItem = newImages[draggedIndex];
+    
+    // Remove dragged item
+    newImages.splice(draggedIndex, 1);
+    
+    // Insert at new position
+    newImages.splice(dropIndex, 0, draggedItem);
+    
+    setImages(newImages);
+    onChange(newImages);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // Handle drag end
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   // Delete image
-  const handleDeleteImage = async (imageUrl, index) => {
+  const handleDeleteImage = async (imageUrl: string, index: number) => {
     if (!confirm('Biztosan törölni szeretnéd ezt a képet?')) {
       return;
     }
@@ -192,7 +244,21 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
       {images.length > 0 && (
         <div className="image-grid">
           {images.map((url, index) => (
-            <div key={index} className="image-item" onClick={() => setPreviewUrl(url)} style={{ cursor: 'pointer' }}>
+            <div
+              key={index}
+              className={`image-item ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              onClick={() => setPreviewUrl(url)}
+              style={{ cursor: 'grab' }}
+            >
+              <div className="drag-handle">
+                <GripVertical size={16} className="text-white/80" />
+              </div>
               <img src={url} alt={`Kép ${index + 1}`} />
               <button
                 type="button"
@@ -265,9 +331,11 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
         </p>
       )}
 
-      <div className="image-upload-info">
-        <Info size={14} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
-        Megengedett formátumok: JPG, PNG, GIF, WebP | Maximum méret: 5MB képenként
+      <div className="flex items-start gap-2 mt-2 text-xs text-muted-foreground">
+        <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+        <span>
+          Megengedett formátumok: JPG, PNG, GIF, WebP | Maximum méret: 5MB képenként
+        </span>
       </div>
     </div>
   );

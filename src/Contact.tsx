@@ -1,8 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./Contact.css";
+import { ContactFormData } from "./types";
 
 function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
@@ -10,14 +11,14 @@ function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setStatus("");
@@ -130,7 +131,7 @@ function Contact() {
                   required
                   disabled={isSubmitting}
                   placeholder="Írd le, miben segíthetünk..."
-                  rows="5"
+                  rows={5}
                 />
               </div>
 

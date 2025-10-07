@@ -1,0 +1,25 @@
+.test-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.test-page h1 {
+  color: white;
+}
+
+.test-page p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.test-page .space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.test-page .space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.test-page .space-x-2 > * + * {
+  margin-left: 0.5rem;
+}

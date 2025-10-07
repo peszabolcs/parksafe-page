@@ -1,15 +1,514 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import 'tailwindcss';
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  overflow-x: hidden;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Force dark mode for admin panel */
+  .admin-dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.646 0.222 142.495); /* Green accent */
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.646 0.222 142.495); /* Green ring */
+    --sidebar: oklch(0.145 0 0); /* Dark sidebar background */
+    --sidebar-foreground: oklch(0.985 0 0); /* Light text */
+    --sidebar-primary: oklch(0.646 0.222 142.495); /* Green primary */
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.205 0 0); /* Darker accent */
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.646 0.222 142.495); /* Green ring */
+  }
+
+  /* Force dark sidebar background - Target all possible elements */
+  .admin-dark [data-slot="sidebar-inner"],
+  .admin-dark [data-sidebar="sidebar"],
+  .admin-dark [data-slot="sidebar"],
+  .admin-dark .bg-sidebar,
+  .admin-dark aside {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Target SheetContent for mobile sidebar */
+  .admin-dark [data-sidebar="sidebar"][data-mobile="true"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target the wrapper div inside SidebarProvider */
+  .admin-dark [data-slot="sidebar-wrapper"] {
+    background: oklch(0.145 0 0) !important;
+  }
+
+  /* Target sidebar container */
+  .admin-dark [data-slot="sidebar-container"] {
+    background: oklch(0.145 0 0) !important;
+  }
+
+  .admin-dark [data-sidebar="header"],
+  .admin-dark [data-slot="sidebar-header"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-sidebar="content"],
+  .admin-dark [data-slot="sidebar-content"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  .admin-dark [data-sidebar="footer"],
+  .admin-dark [data-slot="sidebar-footer"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-sidebar="menu-button"] {
+    transition: all 0.2s ease;
+    color: oklch(0.985 0 0) !important;
+    background: transparent !important;
+  }
+
+  .admin-dark [data-sidebar="menu-button"]:hover {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  .admin-dark [data-sidebar="menu-button"][data-active="true"] {
+    background: oklch(0.646 0.222 142.495) !important;
+    background-color: oklch(0.646 0.222 142.495) !important;
+    color: oklch(0.985 0 0) !important;
+    font-weight: 600;
+    box-shadow: 0 4px 12px oklch(0.646 0.222 142.495 / 0.3);
+  }
+
+  .admin-dark [data-sidebar="group-label"] {
+    color: oklch(0.708 0 0) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Nuclear option - override all background colors in sidebar area */
+  .admin-dark aside,
+  .admin-dark aside > *,
+  .admin-dark aside * {
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Specifically target the Sheet component for mobile */
+  .admin-dark [role="dialog"][data-sidebar="sidebar"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Override any white backgrounds */
+  .admin-dark .bg-white,
+  .admin-dark .bg-background {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target Sheet component specifically for mobile sidebar - More aggressive */
+  .admin-dark [data-slot="sheet-content"],
+  .admin-dark [data-slot="sheet-content"].bg-sidebar,
+  .admin-dark [data-sidebar="sidebar"][data-slot="sidebar"][data-mobile="true"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-slot="sheet-overlay"] {
+    background: oklch(0 0 0 / 0.6) !important;
+  }
+
+  /* More specific targeting for mobile sidebar content */
+  .admin-dark [role="dialog"] [data-sidebar="sidebar"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target everything inside the mobile sheet */
+  .admin-dark [data-slot="sheet-content"] *,
+  .admin-dark [data-slot="sheet-content"] > *,
+  .admin-dark [data-slot="sheet-content"] div {
+    background-color: inherit !important;
+  }
+
+  /* Specifically override bg-sidebar class in mobile */
+  .admin-dark [data-mobile="true"].bg-sidebar {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Override the close button in sheet */
+  .admin-dark [data-slot="sheet-content"] button[aria-label="Close"] {
+    color: oklch(0.985 0 0) !important;
+    background: oklch(0.205 0 0) !important;
+  }
+
+  .admin-dark [data-slot="sheet-content"] button[aria-label="Close"]:hover {
+    background: oklch(0.269 0 0) !important;
+  }
+
+  /* Nuclear option for mobile sheet - override any white/light backgrounds */
+  .admin-dark [data-slot="sheet-content"],
+  .admin-dark [data-slot="sheet-content"] > div,
+  .admin-dark [data-slot="sheet-content"] [class*="bg-"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Force dark theme for all popovers, dropdowns, and floating elements */
+  .admin-dark [role="menu"],
+  .admin-dark [role="listbox"],
+  .admin-dark [role="combobox"],
+  .admin-dark [data-slot="popover-content"],
+  .admin-dark [data-slot="dropdown-content"],
+  .admin-dark [data-slot="menu-content"],
+  .admin-dark [data-radix-popper-content-wrapper],
+  .admin-dark [data-side],
+  .admin-dark [data-align] {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+    box-shadow: 0 4px 12px oklch(0 0 0 / 0.15) !important;
+  }
+
+  /* Target specific popover components */
+  .admin-dark .bg-popover {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Target dropdown menu items */
+  .admin-dark [role="menuitem"],
+  .admin-dark [data-slot="menu-item"],
+  .admin-dark [data-slot="dropdown-item"] {
+    color: oklch(0.985 0 0) !important;
+    background: transparent !important;
+  }
+
+  /* Regular menu item hover (not destructive) */
+  .admin-dark [role="menuitem"]:hover:not(.text-destructive),
+  .admin-dark [role="menuitem"]:focus:not(.text-destructive),
+  .admin-dark [data-slot="menu-item"]:hover:not(.text-destructive),
+  .admin-dark [data-slot="dropdown-item"]:hover:not(.text-destructive) {
+    background: oklch(0.269 0 0) !important;
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+
+
+  /* Target all floating elements that might be portaled */
+  body:has(.admin-dark) [role="menu"],
+  body:has(.admin-dark) [role="listbox"],
+  body:has(.admin-dark) [role="dialog"]:not([data-sidebar]),
+  body:has(.admin-dark) [data-side],
+  body:has(.admin-dark) [data-align] {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Portal menu item hover states (not destructive) */
+  body:has(.admin-dark) [role="menuitem"]:hover:not(.text-destructive),
+  body:has(.admin-dark) [role="menuitem"]:focus:not(.text-destructive) {
+    background: oklch(0.269 0 0) !important;
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Ensure separators in dropdowns are also dark themed */
+  .admin-dark [role="separator"],
+  body:has(.admin-dark) [role="separator"] {
+    background: oklch(1 0 0 / 10%) !important;
+    background-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Target tooltip and other floating content */
+  .admin-dark [role="tooltip"],
+  body:has(.admin-dark) [role="tooltip"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Nuclear option - any white background in admin context */
+  .admin-dark .bg-white,
+  .admin-dark .bg-background,
+  body:has(.admin-dark) .bg-white:not([data-sidebar]),
+  body:has(.admin-dark) .bg-background:not([data-sidebar]) {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Ensure tables fill the card completely */
+  .admin-dark .bg-card.border-border table {
+    border-radius: 0 !important;
+  }
+
+  /* Remove any margin/padding that creates gaps */
+  .admin-dark .bg-card.border-border > div > div {
+    margin: 0 !important;
+  }
+
+  /* Ensure first and last table elements fit card borders */
+  .admin-dark table thead tr:first-child th:first-child {
+    border-top-left-radius: calc(var(--radius) - 2px);
+  }
+
+  .admin-dark table thead tr:first-child th:last-child {
+    border-top-right-radius: calc(var(--radius) - 2px);
+  }
+
+  /* Make ONLY trash/delete menu items red - more specific targeting */
+  .admin-dark [role="menuitem"].text-destructive,
+  .admin-dark [role="menuitem"].text-destructive svg,
+  body:has(.admin-dark) [role="menuitem"].text-destructive,
+  body:has(.admin-dark) [role="menuitem"].text-destructive svg {
+    color: oklch(0.704 0.191 22.216) !important;
+  }
+
+  /* Hover state for destructive menu items only */
+  .admin-dark [role="menuitem"].text-destructive:hover,
+  body:has(.admin-dark) [role="menuitem"].text-destructive:hover {
+    background: oklch(0.704 0.191 22.216 / 0.1) !important;
+    color: oklch(0.704 0.191 22.216) !important;
+  }
+
+  .admin-dark [role="menuitem"].text-destructive:hover svg,
+  body:has(.admin-dark) [role="menuitem"].text-destructive:hover svg {
+    color: oklch(0.704 0.191 22.216) !important;
+  }
+
+  /* Fix button hover effects in dialogs and portaled content */
+  .admin-dark button[data-slot="button"],
+  .admin-dark button,
+  body:has(.admin-dark) button {
+    transition: all 0.2s ease !important;
+  }
+
+  .admin-dark button[data-slot="button"]:hover,
+  .admin-dark button:hover,
+  body:has(.admin-dark) button:hover {
+    transform: translateY(-1px) !important;
+  }
+
+  /* Specific button variant hover effects */
+  .admin-dark button[data-variant="outline"]:hover,
+  .admin-dark .btn-outline:hover,
+  body:has(.admin-dark) button[data-variant="outline"]:hover {
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 15%) !important;
+  }
+
+  /* Override any conflicting background rules for buttons */
+  .admin-dark [role="dialog"] button,
+  body:has(.admin-dark) [role="dialog"] button {
+    background-color: transparent !important;
+  }
+
+  .admin-dark [role="dialog"] button:hover,
+  body:has(.admin-dark) [role="dialog"] button:hover {
+    background-color: oklch(0.269 0 0) !important;
+  }
+
+  /* Make the Edit (Szerkesztés) button green - more specific targeting */
+  .admin-dark button[class*="bg-primary"]:not([role="checkbox"]),
+  .admin-dark [role="dialog"] button[class*="bg-primary"]:not([role="checkbox"]),
+  body:has(.admin-dark) button[class*="bg-primary"]:not([role="checkbox"]) {
+    background-color: oklch(0.646 0.222 142.495 / 0.2) !important;
+    border-color: oklch(0.646 0.222 142.495 / 0.3) !important;
+    color: oklch(0.646 0.222 142.495) !important;
+  }
+
+  .admin-dark button[class*="bg-primary"]:not([role="checkbox"]):hover,
+  .admin-dark [role="dialog"] button[class*="bg-primary"]:not([role="checkbox"]):hover,
+  body:has(.admin-dark) button[class*="bg-primary"]:not([role="checkbox"]):hover {
+    background-color: oklch(0.646 0.222 142.495 / 0.3) !important;
+    border-color: oklch(0.646 0.222 142.495 / 0.5) !important;
+    color: oklch(0.985 0 0) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Keep checkboxes with their default styling */
+  .admin-dark [role="checkbox"],
+  .admin-dark input[type="checkbox"],
+  .admin-dark [data-state="unchecked"],
+  body:has(.admin-dark) [role="checkbox"],
+  body:has(.admin-dark) input[type="checkbox"],
+  body:has(.admin-dark) [data-state="unchecked"] {
+    background-color: transparent !important;
+    border-color: oklch(0.708 0 0) !important;
+  }
+
+  /* Make selected/checked checkboxes green */
+  .admin-dark [role="checkbox"]:checked,
+  .admin-dark input[type="checkbox"]:checked,
+  .admin-dark [data-state="checked"],
+  .admin-dark [aria-checked="true"],
+  body:has(.admin-dark) [role="checkbox"]:checked,
+  body:has(.admin-dark) input[type="checkbox"]:checked,
+  body:has(.admin-dark) [data-state="checked"],
+  body:has(.admin-dark) [aria-checked="true"] {
+    background-color: oklch(0.646 0.222 142.495) !important;
+    border-color: oklch(0.646 0.222 142.495) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Target shadcn checkbox component specifically */
+  .admin-dark button[role="checkbox"][data-state="checked"],
+  body:has(.admin-dark) button[role="checkbox"][data-state="checked"] {
+    background-color: oklch(0.646 0.222 142.495) !important;
+    border-color: oklch(0.646 0.222 142.495) !important;
+  }
+
+  .admin-dark button[role="checkbox"][data-state="checked"] svg,
+  body:has(.admin-dark) button[role="checkbox"][data-state="checked"] svg {
+    color: oklch(0.985 0 0) !important;
+  }
 }
