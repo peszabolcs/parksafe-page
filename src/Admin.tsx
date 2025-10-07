@@ -85,7 +85,7 @@ function Admin() {
 
         // Apply search filter
         if (searchTerm && activeTab === 'users') {
-          query = query.or(`username.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`);
+          query = query.or(`username.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`);
         }
 
         // Apply sorting
