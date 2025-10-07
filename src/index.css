@@ -138,43 +138,160 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.646 0.222 142.495); /* Green ring */
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar: oklch(0.145 0 0); /* Dark sidebar background */
+    --sidebar-foreground: oklch(0.985 0 0); /* Light text */
     --sidebar-primary: oklch(0.646 0.222 142.495); /* Green primary */
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent: oklch(0.205 0 0); /* Darker accent */
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.646 0.222 142.495); /* Green ring */
   }
 
-  /* Custom sidebar styling for admin panel */
-  .admin-dark .sidebar {
-    background: oklch(0.205 0 0);
-    border-color: oklch(1 0 0 / 10%);
+  /* Force dark sidebar background - Target all possible elements */
+  .admin-dark [data-slot="sidebar-inner"],
+  .admin-dark [data-sidebar="sidebar"],
+  .admin-dark [data-slot="sidebar"],
+  .admin-dark .bg-sidebar,
+  .admin-dark aside {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+    color: oklch(0.985 0 0) !important;
   }
 
-  .admin-dark .sidebar [data-sidebar="menu-button"] {
+  /* Target SheetContent for mobile sidebar */
+  .admin-dark [data-sidebar="sidebar"][data-mobile="true"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target the wrapper div inside SidebarProvider */
+  .admin-dark [data-slot="sidebar-wrapper"] {
+    background: oklch(0.145 0 0) !important;
+  }
+
+  /* Target sidebar container */
+  .admin-dark [data-slot="sidebar-container"] {
+    background: oklch(0.145 0 0) !important;
+  }
+
+  .admin-dark [data-sidebar="header"],
+  .admin-dark [data-slot="sidebar-header"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-sidebar="content"],
+  .admin-dark [data-slot="sidebar-content"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  .admin-dark [data-sidebar="footer"],
+  .admin-dark [data-slot="sidebar-footer"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-sidebar="menu-button"] {
     transition: all 0.2s ease;
+    color: oklch(0.985 0 0) !important;
+    background: transparent !important;
   }
 
-  .admin-dark .sidebar [data-sidebar="menu-button"]:hover {
-    background: oklch(0.269 0 0);
-    color: oklch(0.985 0 0);
+  .admin-dark [data-sidebar="menu-button"]:hover {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
   }
 
-  .admin-dark .sidebar [data-sidebar="menu-button"][data-active="true"] {
-    background: oklch(0.646 0.222 142.495);
-    color: oklch(0.985 0 0);
+  .admin-dark [data-sidebar="menu-button"][data-active="true"] {
+    background: oklch(0.646 0.222 142.495) !important;
+    background-color: oklch(0.646 0.222 142.495) !important;
+    color: oklch(0.985 0 0) !important;
     font-weight: 600;
     box-shadow: 0 4px 12px oklch(0.646 0.222 142.495 / 0.3);
   }
 
-  .admin-dark .sidebar [data-sidebar="group-label"] {
-    color: oklch(0.708 0 0);
+  .admin-dark [data-sidebar="group-label"] {
+    color: oklch(0.708 0 0) !important;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+  }
+
+  /* Nuclear option - override all background colors in sidebar area */
+  .admin-dark aside,
+  .admin-dark aside > *,
+  .admin-dark aside * {
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Specifically target the Sheet component for mobile */
+  .admin-dark [role="dialog"][data-sidebar="sidebar"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Override any white backgrounds */
+  .admin-dark .bg-white,
+  .admin-dark .bg-background {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target Sheet component specifically for mobile sidebar - More aggressive */
+  .admin-dark [data-slot="sheet-content"],
+  .admin-dark [data-slot="sheet-content"].bg-sidebar,
+  .admin-dark [data-sidebar="sidebar"][data-slot="sidebar"][data-mobile="true"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  .admin-dark [data-slot="sheet-overlay"] {
+    background: oklch(0 0 0 / 0.6) !important;
+  }
+
+  /* More specific targeting for mobile sidebar content */
+  .admin-dark [role="dialog"] [data-sidebar="sidebar"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Target everything inside the mobile sheet */
+  .admin-dark [data-slot="sheet-content"] *,
+  .admin-dark [data-slot="sheet-content"] > *,
+  .admin-dark [data-slot="sheet-content"] div {
+    background-color: inherit !important;
+  }
+
+  /* Specifically override bg-sidebar class in mobile */
+  .admin-dark [data-mobile="true"].bg-sidebar {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+  }
+
+  /* Override the close button in sheet */
+  .admin-dark [data-slot="sheet-content"] button[aria-label="Close"] {
+    color: oklch(0.985 0 0) !important;
+    background: oklch(0.205 0 0) !important;
+  }
+
+  .admin-dark [data-slot="sheet-content"] button[aria-label="Close"]:hover {
+    background: oklch(0.269 0 0) !important;
+  }
+
+  /* Nuclear option for mobile sheet - override any white/light backgrounds */
+  .admin-dark [data-slot="sheet-content"],
+  .admin-dark [data-slot="sheet-content"] > div,
+  .admin-dark [data-slot="sheet-content"] [class*="bg-"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
   }
 }

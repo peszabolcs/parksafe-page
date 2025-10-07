@@ -184,11 +184,18 @@ function Sidebar({
         <SheetContent
           data-sidebar="sidebar"
           data-slot="sidebar"
-          data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+              backgroundColor: "#0a0a0a",
+              color: "#f1f5f9",
+              borderColor: "#0a0a0a",
+              "--sidebar": "#0a0a0a",
+              "--sidebar-foreground": "#f1f5f9",
+              "--sidebar-border": "#0a0a0a",
+              "--sidebar-accent": "#000000ff",
+              "--sidebar-accent-foreground": "#f1f5f9"
             } as React.CSSProperties
           }
           side={side}
@@ -197,7 +204,20 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div 
+            className="flex h-full w-full flex-col" 
+            style={{
+              backgroundColor: "#1e293b",
+              color: "#f1f5f9",
+              "--sidebar": "#1e293b",
+              "--sidebar-foreground": "#f1f5f9",
+              "--sidebar-border": "#334155",
+              "--sidebar-accent": "#22c55e",
+              "--sidebar-accent-foreground": "#f1f5f9"
+            } as React.CSSProperties}
+          >
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     )

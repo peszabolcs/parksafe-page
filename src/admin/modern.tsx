@@ -454,22 +454,48 @@ function ModernAdmin() {
   if (loading || !profile) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-400">
-          <Loader2 className="h-8 w-8 animate-spin" />
-          <span className="text-lg">Betöltés...</span>
-        </div>
+        <Card className="bg-gray-800 border-gray-700 shadow-2xl">
+          <CardContent className="p-8">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center animate-pulse">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                </div>
+                <div className="absolute inset-0 rounded-full border-2 border-green-500/20 animate-ping"></div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-2">Admin Panel betöltése</h3>
+                <p className="text-gray-400">Kérjük várjon...</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (profile.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center text-gray-400">
-          <XCircle className="h-16 w-16 mx-auto mb-4 text-red-500" />
-          <h2 className="text-xl font-semibold mb-2">Hozzáférés megtagadva</h2>
-          <p>Nincs jogosultságod az admin panel megtekintéséhez.</p>
-        </div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <Card className="bg-gray-800 border-gray-700 shadow-2xl max-w-md w-full">
+          <CardContent className="p-8">
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full bg-red-500/20 border-2 border-red-500/30 mx-auto mb-6 flex items-center justify-center">
+                <XCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-3">Hozzáférés megtagadva</h2>
+              <p className="text-gray-400 mb-6">Nincs jogosultságod az admin panel megtekintéséhez. Csak adminisztrátorok érhetik el ezt az oldalt.</p>
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Vissza a főoldalra
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -477,20 +503,20 @@ function ModernAdmin() {
   return (
     <TooltipProvider>
       <SidebarProvider defaultOpen={false}>
-        <div className="admin-dark min-h-screen bg-gray-900 text-gray-100 flex w-full">
+        <div className="admin-dark min-h-screen bg-background text-foreground flex w-full">
           {/* Sidebar */}
           <Sidebar 
-            className="border-r border-gray-700 bg-gray-800" 
+            className="bg-sidebar border-r border-sidebar-border" 
             collapsible="icon"
           >
-            <SidebarHeader className="border-b border-gray-700 p-6">
+            <SidebarHeader className="border-b border-sidebar-border p-6">
               <div className="flex items-center gap-3 group-data-[state=collapsed]:justify-center">
                 <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
                   <img src="/logo.png" alt="ParkSafe" className="w-8 h-8" />
                 </div>
                 <div className="group-data-[state=collapsed]:hidden">
-                  <h2 className="text-lg font-bold text-white">Admin Panel</h2>
-                  <p className="text-xs text-gray-400">ParkSafe kezelés</p>
+                  <h2 className="text-lg font-bold text-sidebar-foreground">Admin Panel</h2>
+                  <p className="text-xs text-muted-foreground">ParkSafe kezelés</p>
                 </div>
               </div>
             </SidebarHeader>
@@ -498,7 +524,7 @@ function ModernAdmin() {
             <SidebarContent>
               <ScrollArea className="flex-1">
                 <SidebarGroup>
-                  <SidebarGroupLabel className="text-gray-400 text-xs font-semibold uppercase tracking-wider px-2 py-2 flex items-center gap-2">
+                  <SidebarGroupLabel className="text-muted-foreground text-xs font-semibold uppercase tracking-wider px-2 py-2 flex items-center gap-2">
                     <Users className="h-3 w-3" />
                     Adatkezelés
                   </SidebarGroupLabel>
@@ -511,8 +537,8 @@ function ModernAdmin() {
                         tooltip="Összes regisztrált felhasználó kezelése"
                         className={`w-full h-12 transition-all duration-200 ${
                           activeTab === 'users'
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/25'
-                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent'
                         }`}
                       >
                         <Users className="h-5 w-5" />
@@ -527,8 +553,8 @@ function ModernAdmin() {
                         tooltip="Bicikli parkolók létrehozása és kezelése"
                         className={`w-full h-12 transition-all duration-200 ${
                           activeTab === 'parking'
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/25'
-                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent'
                         }`}
                       >
                         <MapPin className="h-5 w-5" />
@@ -543,8 +569,8 @@ function ModernAdmin() {
                         tooltip="Kerékpár szervizek és boltok kezelése"
                         className={`w-full h-12 transition-all duration-200 ${
                           activeTab === 'services'
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/25'
-                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent'
                         }`}
                       >
                         <Building className="h-5 w-5" />
@@ -559,8 +585,8 @@ function ModernAdmin() {
                         tooltip="Önkiszolgáló javító állomások kezelése"
                         className={`w-full h-12 transition-all duration-200 ${
                           activeTab === 'repair'
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/25'
-                            : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
+                            : 'text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent'
                         }`}
                       >
                         <Wrench className="h-5 w-5" />
@@ -594,13 +620,13 @@ function ModernAdmin() {
               </ScrollArea>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-gray-700 p-4 group-data-[state=collapsed]:p-2 group-data-[state=collapsed]:flex group-data-[state=collapsed]:justify-center">
+            <SidebarFooter className="border-t border-sidebar-border p-4 group-data-[state=collapsed]:p-2 group-data-[state=collapsed]:flex group-data-[state=collapsed]:justify-center">
               <SidebarMenu className="group-data-[state=collapsed]:flex group-data-[state=collapsed]:justify-center">
                 <SidebarMenuItem className="group-data-[state=collapsed]:flex group-data-[state=collapsed]:justify-center">
                   <SidebarMenuButton
                     onClick={() => navigate('/profile')}
                     tooltip="Vissza a felhasználói profilhoz"
-                    className="w-full justify-start group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:w-10 group-data-[state=collapsed]:h-10 group-data-[state=collapsed]:p-0 gap-3 text-gray-300 hover:text-white hover:bg-gray-700 border border-gray-600"
+                    className="w-full justify-start group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:w-10 group-data-[state=collapsed]:h-10 group-data-[state=collapsed]:p-0 gap-3 text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent border border-sidebar-border"
                   >
                     <ArrowLeft className="h-4 w-4 flex-shrink-0" />
                     <span className="group-data-[state=collapsed]:hidden">Vissza a profilhoz</span>
@@ -613,88 +639,175 @@ function ModernAdmin() {
           {/* Main Content */}
           <main className="flex-1 p-8 overflow-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="bg-gray-800 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white" />
-              <div>
-                <h1 className="text-3xl font-bold text-white mb-2">
-                  {activeTab === 'users' && 'Felhasználók'}
-                  {activeTab === 'parking' && 'Bicikli Parkolók'}
-                  {activeTab === 'services' && 'Szervizek & Boltok'}
-                  {activeTab === 'repair' && 'Javító Állomások'}
-                </h1>
-                <p className="text-gray-400">
-                  {activeTab === 'users' && 'Összes regisztrált felhasználó kezelése'}
-                  {activeTab === 'parking' && 'Bicikli parkolók létrehozása és kezelése'}
-                  {activeTab === 'services' && 'Kerékpár szervizek és boltok kezelése'}
-                  {activeTab === 'repair' && 'Önkiszolgáló javító állomások kezelése'}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder={
-                    activeTab === 'users' ? 'Keresés név vagy email alapján...' :
-                    activeTab === 'parking' ? 'Keresés név, város vagy leírás alapján...' :
-                    activeTab === 'services' ? 'Keresés név vagy város alapján...' :
-                    'Keresés név vagy város alapján...'
-                  }
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-80 bg-gray-800 border-gray-600 text-white placeholder:text-gray-400 focus:border-green-500 focus:ring-green-500/20"
-                />
-              </div>
-
-              {activeTab !== 'users' && (
-                <Button
-                  onClick={handleAddLocation}
-                  className="bg-green-600 hover:bg-green-700 text-white gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Új hozzáadása
-                </Button>
-              )}
-
-              <div className="flex gap-2">
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardContent className="px-4 py-2">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-500">{totalCount}</div>
-                      <div className="text-xs text-gray-400">
-                        {searchTerm ? 'Találat' : 'Összes elem'}
+        <header className="mb-8">
+          <Card className="bg-card border-border shadow-lg">
+            <CardContent className="p-4 sm:p-6">
+              {/* Mobile Layout */}
+              <div className="block xl:hidden space-y-4">
+                {/* Top row: Trigger + Title */}
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent/80 hover:text-sidebar-foreground transition-all duration-200" />
+                  
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                      {activeTab === 'users' && <Users className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+                      {activeTab === 'parking' && <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+                      {activeTab === 'services' && <Building className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+                      {activeTab === 'repair' && <Wrench className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">
+                        {activeTab === 'users' && 'Felhasználók'}
+                        {activeTab === 'parking' && 'Bicikli Parkolók'}
+                        {activeTab === 'services' && 'Szervizek & Boltok'}
+                        {activeTab === 'repair' && 'Javító Állomások'}
+                      </h1>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">
+                          {totalCount} elem
+                        </Badge>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
 
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardContent className="px-4 py-2">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-500">
-                        {currentPage} / {totalPages || 1}
-                      </div>
-                      <div className="text-xs text-gray-400">Oldal</div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Bottom row: Search + Action */}
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Keresés..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 pr-8 bg-input border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 transition-all duration-200"
+                    />
+                    {searchTerm && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                        onClick={() => setSearchTerm('')}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {activeTab !== 'users' && (
+                    <Button
+                      onClick={handleAddLocation}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/25 transition-all duration-200 flex-shrink-0"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span className="hidden sm:inline ml-2">Új hozzáadása</span>
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+
+              {/* Desktop Layout */}
+              <div className="hidden xl:flex items-center justify-between">
+                {/* Left Section - Title & Controls */}
+                <div className="flex items-center gap-4">
+                  <SidebarTrigger className="bg-sidebar-accent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent/80 hover:text-sidebar-foreground transition-all duration-200" />
+                  
+                  <Separator orientation="vertical" className="h-8 bg-sidebar-border" />
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                      {activeTab === 'users' && <Users className="h-5 w-5 text-white" />}
+                      {activeTab === 'parking' && <MapPin className="h-5 w-5 text-white" />}
+                      {activeTab === 'services' && <Building className="h-5 w-5 text-white" />}
+                      {activeTab === 'repair' && <Wrench className="h-5 w-5 text-white" />}
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                        {activeTab === 'users' && 'Felhasználók'}
+                        {activeTab === 'parking' && 'Bicikli Parkolók'}
+                        {activeTab === 'services' && 'Szervizek & Boltok'}
+                        {activeTab === 'repair' && 'Javító Állomások'}
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                          {totalCount} elem
+                        </Badge>
+                      </h1>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        {activeTab === 'users' && 'Összes regisztrált felhasználó kezelése'}
+                        {activeTab === 'parking' && 'Bicikli parkolók létrehozása és kezelése'}
+                        {activeTab === 'services' && 'Kerékpár szervizek és boltok kezelése'}
+                        {activeTab === 'repair' && 'Önkiszolgáló javító állomások kezelése'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Section - Search & Actions */}
+                <div className="flex items-center gap-4">
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder={
+                        activeTab === 'users' ? 'Keresés név vagy email alapján...' :
+                        activeTab === 'parking' ? 'Keresés név, város vagy leírás alapján...' :
+                        activeTab === 'services' ? 'Keresés név vagy város alapján...' :
+                        'Keresés név vagy város alapján...'
+                      }
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 w-80 bg-input border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 transition-all duration-200"
+                    />
+                    {searchTerm && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                        onClick={() => setSearchTerm('')}
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {activeTab !== 'users' && (
+                    <>
+                      <Separator orientation="vertical" className="h-8 bg-sidebar-border" />
+                      
+                      <Button
+                        onClick={handleAddLocation}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-lg hover:shadow-primary/25 transition-all duration-200"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Új hozzáadása
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </header>
 
         {/* Content */}
         {(usersLoading || dataLoading) ? (
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-12">
-              <div className="flex flex-col items-center justify-center gap-4">
-                <Loader2 className="h-8 w-8 animate-spin text-green-500" />
-                <p className="text-gray-400">
-                  {activeTab === 'users' ? 'Felhasználók betöltése...' : 'Adatok betöltése...'}
-                </p>
+          <Card className="bg-gray-800 border-gray-700 shadow-lg">
+            <CardContent className="p-16">
+              <div className="flex flex-col items-center justify-center gap-6">
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center animate-pulse">
+                    <Loader2 className="h-8 w-8 animate-spin text-white" />
+                  </div>
+                  <div className="absolute inset-0 rounded-full border-2 border-green-500/20 animate-ping"></div>
+                  <div className="absolute inset-0 rounded-full border border-green-500/40 animate-pulse"></div>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    {activeTab === 'users' && 'Felhasználók betöltése'}
+                    {activeTab === 'parking' && 'Bicikli parkolók betöltése'}
+                    {activeTab === 'services' && 'Szervizek betöltése'}
+                    {activeTab === 'repair' && 'Javító állomások betöltése'}
+                  </h3>
+                  <p className="text-gray-400">Kérjük várjon, amíg az adatok betöltődnek...</p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -1332,77 +1445,96 @@ function ModernAdmin() {
                 </div>
               )}
 
-              {/* Pagination */}
+              {/* Modern Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 p-4 border-t border-gray-700">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(1)}
-                    disabled={currentPage === 1}
-                    className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
-                  >
-                    Első
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
-                  >
-                    Előző
-                  </Button>
-                  
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      let pageNum;
-                      if (totalPages <= 5) {
-                        pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                        pageNum = i + 1;
-                      } else if (currentPage >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                      } else {
-                        pageNum = currentPage - 2 + i;
-                      }
+                <div className="mt-6">
+                  <Separator className="bg-gray-700" />
+                  <div className="flex items-center justify-between p-4">
+                    {/* Page Info */}
+                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                      <span>Oldal</span>
+                      <Badge variant="outline" className="border-gray-600 text-gray-300">
+                        {currentPage} / {totalPages}
+                      </Badge>
+                      <span>összesen {totalCount} elem</span>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(1)}
+                        disabled={currentPage === 1}
+                        className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        Első
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        Előző
+                      </Button>
                       
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={currentPage === pageNum ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => handlePageChange(pageNum)}
-                          className={
-                            currentPage === pageNum
-                              ? 'bg-green-600 hover:bg-green-700 text-white'
-                              : 'border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700'
+                      <Separator orientation="vertical" className="h-6 bg-gray-600 mx-2" />
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          let pageNum;
+                          if (totalPages <= 5) {
+                            pageNum = i + 1;
+                          } else if (currentPage <= 3) {
+                            pageNum = i + 1;
+                          } else if (currentPage >= totalPages - 2) {
+                            pageNum = totalPages - 4 + i;
+                          } else {
+                            pageNum = currentPage - 2 + i;
                           }
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
+                          
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={currentPage === pageNum ? 'default' : 'outline'}
+                              size="sm"
+                              onClick={() => handlePageChange(pageNum)}
+                              className={
+                                currentPage === pageNum
+                                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/25 transition-all duration-200'
+                                  : 'border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 transition-all duration-200'
+                              }
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <Separator orientation="vertical" className="h-6 bg-gray-600 mx-2" />
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        Következő
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(totalPages)}
+                        disabled={currentPage === totalPages}
+                        className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                      >
+                        Utolsó
+                      </Button>
+                    </div>
                   </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
-                  >
-                    Következő
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(totalPages)}
-                    disabled={currentPage === totalPages}
-                    className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
-                  >
-                    Utolsó
-                  </Button>
                 </div>
               )}
             </CardContent>
@@ -1410,34 +1542,40 @@ function ModernAdmin() {
         )}
       </main>
 
-      {/* Delete Confirmation Modal */}
+      {/* Modern Delete Confirmation Modal */}
       {deleteModal.show && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="bg-gray-800 border-gray-700 w-full max-w-md mx-4">
-            <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                <Trash2 className="h-8 w-8 text-red-600" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <Card className="bg-gray-800 border-gray-700 w-full max-w-md mx-4 shadow-2xl animate-in zoom-in-95 duration-200">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto w-16 h-16 bg-red-500/20 border-2 border-red-500/30 rounded-full flex items-center justify-center mb-4 animate-pulse">
+                <Trash2 className="h-8 w-8 text-red-400" />
               </div>
-              <CardTitle className="text-white">Megerősítés szükséges</CardTitle>
-              <CardDescription className="text-gray-400">
-                Biztosan törölni szeretnéd ezt az elemet? Ez a művelet nem vonható vissza!
+              <CardTitle className="text-white text-xl font-semibold">Megerősítés szükséges</CardTitle>
+              <CardDescription className="text-gray-400 mt-2 leading-relaxed">
+                Biztosan törölni szeretnéd ezt az elemet? Ez a művelet nem vonható vissza, és az összes kapcsolódó adat is elvész!
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex gap-3 justify-center">
-              <Button
-                variant="outline"
-                onClick={() => setDeleteModal({ show: false, table: null, id: null })}
-                className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
-              >
-                Mégse
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={confirmDelete}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
-                Törlés
-              </Button>
+            
+            <Separator className="bg-gray-700" />
+            
+            <CardContent className="pt-6">
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteModal({ show: false, table: null, id: null })}
+                  className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700 transition-all duration-200 min-w-[80px]"
+                >
+                  Mégse
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={confirmDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-red-600/25 transition-all duration-200 min-w-[80px]"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Törlés
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
