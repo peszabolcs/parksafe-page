@@ -294,4 +294,114 @@
     background: oklch(0.145 0 0) !important;
     background-color: oklch(0.145 0 0) !important;
   }
+
+  /* Force dark theme for all popovers, dropdowns, and floating elements */
+  .admin-dark [role="menu"],
+  .admin-dark [role="listbox"],
+  .admin-dark [role="combobox"],
+  .admin-dark [data-slot="popover-content"],
+  .admin-dark [data-slot="dropdown-content"],
+  .admin-dark [data-slot="menu-content"],
+  .admin-dark [data-radix-popper-content-wrapper],
+  .admin-dark [data-side],
+  .admin-dark [data-align] {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+    box-shadow: 0 4px 12px oklch(0 0 0 / 0.15) !important;
+  }
+
+  /* Target specific popover components */
+  .admin-dark .bg-popover {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Target dropdown menu items */
+  .admin-dark [role="menuitem"],
+  .admin-dark [data-slot="menu-item"],
+  .admin-dark [data-slot="dropdown-item"] {
+    color: oklch(0.985 0 0) !important;
+    background: transparent !important;
+  }
+
+  /* Regular menu item hover (not destructive) */
+  .admin-dark [role="menuitem"]:hover:not(.text-destructive),
+  .admin-dark [role="menuitem"]:focus:not(.text-destructive),
+  .admin-dark [data-slot="menu-item"]:hover:not(.text-destructive),
+  .admin-dark [data-slot="dropdown-item"]:hover:not(.text-destructive) {
+    background: oklch(0.269 0 0) !important;
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+
+
+  /* Target all floating elements that might be portaled */
+  body:has(.admin-dark) [role="menu"],
+  body:has(.admin-dark) [role="listbox"],
+  body:has(.admin-dark) [role="dialog"]:not([data-sidebar]),
+  body:has(.admin-dark) [data-side],
+  body:has(.admin-dark) [data-align] {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Portal menu item hover states (not destructive) */
+  body:has(.admin-dark) [role="menuitem"]:hover:not(.text-destructive),
+  body:has(.admin-dark) [role="menuitem"]:focus:not(.text-destructive) {
+    background: oklch(0.269 0 0) !important;
+    background-color: oklch(0.269 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Ensure separators in dropdowns are also dark themed */
+  .admin-dark [role="separator"],
+  body:has(.admin-dark) [role="separator"] {
+    background: oklch(1 0 0 / 10%) !important;
+    background-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Target tooltip and other floating content */
+  .admin-dark [role="tooltip"],
+  body:has(.admin-dark) [role="tooltip"] {
+    background: oklch(0.145 0 0) !important;
+    background-color: oklch(0.145 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+    border-color: oklch(1 0 0 / 10%) !important;
+  }
+
+  /* Nuclear option - any white background in admin context */
+  .admin-dark .bg-white,
+  .admin-dark .bg-background,
+  body:has(.admin-dark) .bg-white:not([data-sidebar]),
+  body:has(.admin-dark) .bg-background:not([data-sidebar]) {
+    background: oklch(0.205 0 0) !important;
+    background-color: oklch(0.205 0 0) !important;
+    color: oklch(0.985 0 0) !important;
+  }
+
+  /* Make ONLY trash/delete menu items red - more specific targeting */
+  .admin-dark [role="menuitem"].text-destructive,
+  .admin-dark [role="menuitem"].text-destructive svg,
+  body:has(.admin-dark) [role="menuitem"].text-destructive,
+  body:has(.admin-dark) [role="menuitem"].text-destructive svg {
+    color: oklch(0.704 0.191 22.216) !important;
+  }
+
+  /* Hover state for destructive menu items only */
+  .admin-dark [role="menuitem"].text-destructive:hover,
+  body:has(.admin-dark) [role="menuitem"].text-destructive:hover {
+    background: oklch(0.704 0.191 22.216 / 0.1) !important;
+    color: oklch(0.704 0.191 22.216) !important;
+  }
+
+  .admin-dark [role="menuitem"].text-destructive:hover svg,
+  body:has(.admin-dark) [role="menuitem"].text-destructive:hover svg {
+    color: oklch(0.704 0.191 22.216) !important;
+  }
 }
