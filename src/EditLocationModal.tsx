@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabaseClient';
 import ImageUpload from './ImageUpload';
-import { useRef } from 'react';
 import Switch from './components/Switch';
-import { AlertCircle, CheckCircle, Loader2, Plus, X } from 'lucide-react';
-import './AddLocationModal.css';
+import { AlertCircle, CheckCircle, Loader2, Save, X } from 'lucide-react';
+import './AddLocationModal.css'; // Reuse the same styles
 import { lockScroll, unlockScroll } from './utils/modalLock';
 
-function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
-  const imageUploadRef = useRef(null);
+function EditLocationModal({ isOpen, onClose, locationType, item, onSuccess }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -28,10 +26,84 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
   });
   
   const [pictureUrls, setPictureUrls] = useState([]);
-  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Parse coordinates from the item
+  const parseCoordinates = (item) => {
+    if (!item) return { lat: '', lon: '' };
+    
+    // Try direct lat/lon first
+    if (item.lat && item.lon) {
+      return { lat: item.lat, lon: item.lon };
+    }
+    
+    // Try parsing WKB coordinate field
+    if (item.coordinate) {
+      // Handle GeoJSON format
+      if (typeof item.coordinate === 'object' && item.coordinate.type === 'Point') {
+        const [lon, lat] = item.coordinate.coordinates;
+        return { lat, lon };
+      }
+      
+      // Handle WKB string format
+      if (typeof item.coordinate === 'string') {
+        try {
+          const coordsHex = item.coordinate.substring(18);
+          if (coordsHex.length >= 32) {
+            const lonHex = coordsHex.substring(0, 16);
+            const latHex = coordsHex.substring(16, 32);
+            
+            const lonBuffer = new ArrayBuffer(8);
+            const lonView = new DataView(lonBuffer);
+            for (let i = 0; i < 8; i++) {
+              lonView.setUint8(i, parseInt(lonHex.substr(i * 2, 2), 16));
+            }
+            const lon = lonView.getFloat64(0, true);
+            
+            const latBuffer = new ArrayBuffer(8);
+            const latView = new DataView(latBuffer);
+            for (let i = 0; i < 8; i++) {
+              latView.setUint8(i, parseInt(latHex.substr(i * 2, 2), 16));
+            }
+            const lat = latView.getFloat64(0, true);
+            
+            return { lat, lon };
+          }
+        } catch (error) {
+          console.error('Error parsing coordinates:', error);
+        }
+      }
+    }
+    
+    return { lat: '', lon: '' };
+  };
+
+  // Populate form when item changes
+  useEffect(() => {
+    if (item) {
+      const coords = parseCoordinates(item);
+      
+      setFormData({
+        name: item.name || '',
+        description: item.description || '',
+        city: item.city || '',
+        lat: coords.lat ? coords.lat.toString() : '',
+        lon: coords.lon ? coords.lon.toString() : '',
+        covered: item.covered || false,
+        phone: item.phone || '',
+        website: item.website || '',
+        opening_hours: item.opening_hours || '',
+        rating: item.rating ? item.rating.toString() : '',
+        price_range: item.price_range || '',
+        free: item.free || false,
+      });
+      
+      // Set existing images; guard by id to avoid race when switching fast
+      setPictureUrls(Array.isArray(item.picture_url) ? item.picture_url : []);
+    }
+  }, [item?.id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -62,89 +134,64 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
 
       // Determine table name based on location type
       let tableName;
-      let insertData = {
+      let updateData = {
         name: formData.name,
         description: formData.description || null,
         city: formData.city,
-        available: true,
         picture_url: pictureUrls.length > 0 ? pictureUrls : null,
       };
 
       // Add location type specific fields
       if (locationType === 'parking') {
         tableName = 'parkingSpots';
-        insertData.covered = formData.covered;
+        (updateData as any).covered = formData.covered;
       } else if (locationType === 'services') {
         tableName = 'bicycleService';
-        insertData.phone = formData.phone || null;
-        insertData.website = formData.website || null;
-        insertData.opening_hours = formData.opening_hours || null;
-        insertData.rating = formData.rating ? parseFloat(formData.rating) : null;
-        insertData.price_range = formData.price_range || null;
+        (updateData as any).phone = formData.phone || null;
+        (updateData as any).website = formData.website || null;
+        (updateData as any).opening_hours = formData.opening_hours || null;
+        (updateData as any).rating = formData.rating ? parseFloat(formData.rating) : null;
+        (updateData as any).price_range = formData.price_range || null;
       } else if (locationType === 'repair') {
         tableName = 'repairStation';
-        insertData.covered = formData.covered;
-        insertData.free = formData.free;
+        (updateData as any).covered = formData.covered;
+        (updateData as any).free = formData.free;
       }
 
-      // Insert with PostGIS coordinate
-      // Use ST_SetSRID and ST_MakePoint for proper geometry
-      const { data: inserted, error: insertError } = await supabase
+      // Update with PostGIS coordinate
+      const { error: updateError } = await supabase
         .from(tableName)
-        .insert([{
-          ...insertData,
+        .update({
+          ...updateData,
           // PostGIS POINT format: POINT(longitude latitude)
-          coordinate: `SRID=4326;POINT(${lon} ${lat})`
-        }])
-        .select('id')
-        .single();
+          coordinate: `SRID=4326;POINT(${lon} ${lat})`,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', item.id);
 
-      if (insertError) {
-        console.error('Insert error:', insertError);
+      if (updateError) {
+        console.error('Update error:', updateError);
         
         // Handle specific RLS policy errors
-        if (insertError.code === '42501' || insertError.message?.includes('policy')) {
-          throw new Error('Nincs jogosultságod új helyszín hozzáadásához. Csak admin felhasználók adhatnak hozzá új helyszíneket.');
+        if (updateError.code === '42501' || updateError.message?.includes('policy')) {
+          throw new Error('Nincs jogosultságod a helyszín szerkesztéséhez. Csak admin felhasználók szerkeszthetnek helyszíneket.');
         }
         
-        throw new Error(insertError.message || 'Hiba történt az adatbázis művelet során');
-      }
-
-      // If there are staged files (no id earlier), upload them with new id
-      if (imageUploadRef.current && inserted?.id) {
-        const newly = await imageUploadRef.current.uploadPending(inserted.id);
-        if (newly.length > 0) {
-          await supabase.from(tableName).update({ picture_url: newly }).eq('id', inserted.id);
-        }
+        throw new Error(updateError.message || 'Hiba történt az adatbázis művelet során');
       }
 
       setSuccess(true);
       
-      // Reset form
+      // Close and refresh
       setTimeout(() => {
-        setFormData({
-          name: '',
-          description: '',
-          city: '',
-          lat: '',
-          lon: '',
-          covered: false,
-          phone: '',
-          website: '',
-          opening_hours: '',
-          rating: '',
-          price_range: '',
-          free: false,
-        });
-        setPictureUrls([]);
         setSuccess(false);
         onSuccess();
         onClose();
       }, 1500);
 
     } catch (err) {
-      console.error('Error adding location:', err);
-      setError(err.message || 'Hiba történt a helyszín hozzáadása során');
+      console.error('Error updating location:', err);
+      setError(err.message || 'Hiba történt a helyszín frissítése során');
     } finally {
       setIsLoading(false);
     }
@@ -164,18 +211,18 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !item) return null;
 
   const getTitle = () => {
-    if (locationType === 'parking') return 'Parkoló Hozzáadása';
-    if (locationType === 'services') return 'Szerviz Hozzáadása';
-    if (locationType === 'repair') return 'Javító Állomás Hozzáadása';
-    return 'Helyszín Hozzáadása';
+    if (locationType === 'parking') return 'Parkoló Szerkesztése';
+    if (locationType === 'services') return 'Szerviz Szerkesztése';
+    if (locationType === 'repair') return 'Javító Állomás Szerkesztése';
+    return 'Helyszín Szerkesztése';
   };
 
   return (
     <div className="add-location-modal-overlay" onClick={handleOverlayClick}>
-      <div className="add-location-modal-content" key={locationType} onClick={(e) => e.stopPropagation()}>
+      <div className="add-location-modal-content" key={item.id} onClick={(e) => e.stopPropagation()}>
         <div className="add-location-modal-header">
           <h2>{getTitle()}</h2>
           <button className="add-location-modal-close" onClick={onClose} disabled={isLoading}>
@@ -184,7 +231,7 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
         </div>
         
         <div className="add-location-modal-body">
-          <p className="add-location-modal-subtitle">Töltsd ki az alábbi mezőket az új helyszín létrehozásához</p>
+          <p className="add-location-modal-subtitle">Módosítsd az adatokat és mentsd el a változtatásokat</p>
 
           <form onSubmit={handleSubmit} className="add-location-modal-form">
           {/* Common fields */}
@@ -395,7 +442,7 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
             existingImages={pictureUrls}
             onChange={setPictureUrls}
             locationType={locationType}
-            ref={imageUploadRef}
+            locationId={item?.id}
           />
 
           {error && (
@@ -408,7 +455,7 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
           {success && (
             <div className="status-message success">
               <CheckCircle size={16} style={{ marginRight: '6px' }} />
-              Helyszín sikeresen hozzáadva!
+              Helyszín sikeresen frissítve!
             </div>
           )}
 
@@ -434,12 +481,12 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
               ) : success ? (
                 <>
                   <CheckCircle size={16} style={{ marginRight: '6px' }} />
-                  Hozzáadva!
+                  Mentve!
                 </>
               ) : (
                 <>
-                  <Plus size={16} style={{ marginRight: '6px' }} />
-                  Hozzáadás
+                  <Save size={16} style={{ marginRight: '6px' }} />
+                  Mentés
                 </>
               )}
             </button>
@@ -451,5 +498,5 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
   );
 }
 
-export default AddLocationModal;
+export default EditLocationModal;
 

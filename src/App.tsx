@@ -1,20 +1,20 @@
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import "./App.css";
-import { AuthProvider } from "./contexts/AuthContext.jsx";
-import Header from "./Header.jsx";
-import Footer from "./Footer.jsx";
-import HomePage from "./HomePage.jsx";
-import Contact from "./Contact.jsx";
-import Terms from "./Terms.jsx";
-import Privacy from "./Privacy.jsx";
-import Success from "./Success.jsx";
-import Error from "./Error.jsx";
-import EmailChangeSuccess from "./EmailChangeSuccess.jsx";
-import PasswordReset from "./PasswordReset.jsx";
-import Login from "./Login.jsx";
-import Profile from "./Profile.jsx";
-import Admin from "./Admin.jsx";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
+import Header from "./Header.tsx";
+import Footer from "./Footer.tsx";
+import HomePage from "./HomePage.tsx";
+import Contact from "./Contact.tsx";
+import Terms from "./Terms.tsx";
+import Privacy from "./Privacy.tsx";
+import Success from "./Success.tsx";
+import Error from "./Error.tsx";
+import EmailChangeSuccess from "./EmailChangeSuccess.tsx";
+import PasswordReset from "./PasswordReset.tsx";
+import Login from "./Login.tsx";
+import Profile from "./Profile.tsx";
+import Admin from "./Admin.tsx";
 
 // Component to handle OAuth redirects
 function AuthRedirectHandler() {
@@ -47,7 +47,7 @@ function AuthRedirectHandler() {
 }
 
 // Layout wrapper component
-function AppLayout({ children }) {
+function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { SwitchProps } from '../types';
 
 function Switch({
   label = 'Enable Feature',
@@ -22,11 +23,11 @@ function Switch({
   name,
   id,
   'aria-label': ariaLabel,
-}) {
+}: SwitchProps) {
   const { onColor, offColor, thumbColor, borderRadius, width, height } = appearance || {};
 
   // Normalize numeric sizes for perfect centering
-  const num = (v, fallback) => {
+  const num = (v: any, fallback: number): number => {
     const n = typeof v === 'number' ? v : parseFloat(String(v));
     return Number.isFinite(n) ? n : fallback;
   };
@@ -35,12 +36,12 @@ function Switch({
   const padding = Math.max(2, Math.round(nHeight * 0.083)); // ~2px on 24px height
   const nThumb = nHeight - padding * 2; // centered thumb size
 
-  const trackStyle = {
+  const trackStyle: React.CSSProperties = {
     width: `${nWidth}px`,
     height: `${nHeight}px`,
     background: checked ? onColor : offColor,
     borderRadius,
-    position: 'relative',
+    position: 'relative' as const,
     transition: 'background 0.2s ease',
     boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.06)',
     flex: '0 0 auto',
@@ -48,8 +49,8 @@ function Switch({
 
   const thumbTranslatePx = nWidth - nHeight; // distance the circle should travel
 
-  const thumbStyle = {
-    position: 'absolute',
+  const thumbStyle: React.CSSProperties = {
+    position: 'absolute' as const,
     top: `${padding}px`,
     left: `${padding}px`,
     width: `${nThumb}px`,
@@ -61,12 +62,12 @@ function Switch({
     boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
   };
 
-  const handleToggle = (e) => {
+  const handleToggle = () => {
     if (disabled) return;
-    if (onChange) onChange({ target: { name, id, type: 'checkbox', checked: !checked } });
+    if (onChange) onChange(!checked);
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -85,7 +86,7 @@ function Switch({
         name={name}
         id={id}
         checked={checked}
-        onChange={(e) => onChange && onChange(e)}
+        onChange={(e) => onChange && onChange(e.target.checked)}
         disabled={disabled}
         aria-label={ariaLabel || label}
         style={{ display: 'none' }}

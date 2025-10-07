@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import EmailModal from "./EmailModal.jsx";
+import EmailModal from "./EmailModal.tsx";
 
 function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

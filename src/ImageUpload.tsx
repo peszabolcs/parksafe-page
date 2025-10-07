@@ -3,16 +3,17 @@ import ImagePreview from './components/ImagePreview';
 import { supabase } from './lib/supabaseClient';
 import { Image, Plus, X, AlertTriangle, Info, Loader2 } from 'lucide-react';
 import './ImageUpload.css';
+import { ImageUploadProps } from './types';
 
-const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onChange, locationType, locationId = null }, ref) {
-  const [images, setImages] = useState(existingImages);
+const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ existingImages = [], onChange, locationType, locationId = null }, ref) {
+  const [images, setImages] = useState<string[]>(existingImages);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [pendingFiles, setPendingFiles] = useState([]); // files waiting for location id
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]); // files waiting for location id
 
   // Generate unique filename
-  const generateFileName = (file) => {
+  const generateFileName = (file: File): string => {
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 15);
     const extension = file.name.split('.').pop();
@@ -27,7 +28,7 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
   };
 
   // Upload image to Supabase Storage
-  const uploadImage = async (file, forcedLocationId = null) => {
+  const uploadImage = async (file: File, forcedLocationId: string | null = null): Promise<string | null> => {
     const effectiveId = forcedLocationId || locationId;
     const fileName = effectiveId ? `${locationType}_${effectiveId}_${Date.now()}_${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}` : generateFileName(file);
     const filePath = `${locationType}/${fileName}`;
@@ -58,11 +59,11 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
   }, [existingImages, locationId, locationType]);
 
   // Handle file selection
-  const handleFileSelect = async (e) => {
-    const files = Array.from(e.target.files);
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const newImageUrls = [];
+    const newImageUrls: string[] = [];
 
     try {
       for (let i = 0; i < files.length; i++) {
@@ -117,7 +118,7 @@ const ImageUpload = forwardRef(function ImageUpload({ existingImages = [], onCha
   };
 
   // Delete image
-  const handleDeleteImage = async (imageUrl, index) => {
+  const handleDeleteImage = async (imageUrl: string, index: number) => {
     if (!confirm('Biztosan törölni szeretnéd ezt a képet?')) {
       return;
     }
