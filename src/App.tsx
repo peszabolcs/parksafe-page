@@ -15,6 +15,7 @@ import PasswordReset from "./PasswordReset.tsx";
 import Login from "./Login.tsx";
 import Profile from "./Profile.tsx";
 import Admin from "./Admin.tsx";
+import Test from "./Test.tsx";
 
 // Component to handle OAuth redirects
 function AuthRedirectHandler() {
@@ -82,6 +83,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/test" element={<Test />} />
           </Routes>
         </AppLayout>
       </AuthProvider>
