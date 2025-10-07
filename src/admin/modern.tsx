@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
@@ -88,54 +88,6 @@ function ModernAdmin() {
   const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Add fetch control states to prevent duplicates
-  const [isFetching, setIsFetching] = useState(false);
-  const abortControllerRef = useRef(null);
-  const lastFetchParams = useRef(null);
-
-  // Helper function to deduplicate array by ID
-  const deduplicateById = (arr) => {
-    if (!Array.isArray(arr)) return [];
-    
-    const seen = new Set();
-    const duplicates = [];
-    
-    const result = arr.filter(item => {
-      if (!item || !item.id) {
-        console.warn('Item without ID found:', item);
-        return false;
-      }
-      
-      if (seen.has(item.id)) {
-        duplicates.push(item);
-        return false;
-      }
-      
-      seen.add(item.id);
-      return true;
-    });
-    
-    if (duplicates.length > 0) {
-      console.warn('Duplicate items removed:', duplicates.map(item => ({ id: item.id, name: item.name })));
-    }
-    
-    return result;
-  };
-
-  // Helper function to check if we should fetch data
-  const shouldFetchData = (newParams) => {
-    const currentParams = JSON.stringify(newParams);
-    const lastParams = lastFetchParams.current;
-    
-    if (lastParams === currentParams) {
-      console.log('Skipping duplicate fetch with same parameters');
-      return false;
-    }
-    
-    lastFetchParams.current = currentParams;
-    return true;
-  };
-  
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(50);
@@ -188,19 +140,7 @@ function ModernAdmin() {
   useEffect(() => {
     // Fetch users with pagination and search
     const fetchUsers = async () => {
-      // Prevent concurrent fetches
-      if (isFetching) return;
-      
-      setIsFetching(true);
-      
       try {
-        // Cancel any ongoing request
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
-        
-        abortControllerRef.current = new AbortController();
-        
         const from = (currentPage - 1) * pageSize;
         const to = from + pageSize - 1;
 
@@ -210,15 +150,13 @@ function ModernAdmin() {
 
         // Apply search filter
         if (searchTerm && activeTab === 'users') {
-          query = query.or(`username.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`);
+          query = query.or(`username.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%,phone.ilike.%${searchTerm}%`);
         }
 
         // Apply sorting
         const sortKey = sortConfig.key || 'created_at';
         const ascending = sortConfig.direction === 'asc';
-        
-        // Add secondary sort by id to ensure consistent ordering
-        query = query.order(sortKey, { ascending }).order('id', { ascending: true });
+        query = query.order(sortKey, { ascending });
 
         // Apply pagination
         const { data, error, count } = await query.range(from, to);
@@ -226,52 +164,28 @@ function ModernAdmin() {
         if (error) {
           console.error('Error fetching users:', error);
         } else {
-          // Deduplicate data before setting
-          const deduplicatedData = deduplicateById(data || []);
-          setUsers(deduplicatedData);
+          setUsers(data || []);
           setTotalCount(count || 0);
         }
       } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('Error:', error);
-        }
+        console.error('Error:', error);
       } finally {
         setUsersLoading(false);
-        setIsFetching(false);
       }
     };
 
-    if (profile?.role === 'admin' && activeTab === 'users' && !isFetching) {
+    if (profile?.role === 'admin' && activeTab === 'users') {
       setUsersLoading(true);
       fetchUsers();
     }
   }, [profile, activeTab, currentPage, pageSize, sortConfig, searchTerm]);
 
   const fetchAllData = async () => {
-    if (profile?.role !== 'admin' || isFetching) return;
+    if (profile?.role !== 'admin') return;
     
-    // Check if we should fetch with current parameters
-    const fetchParams = {
-      tab: activeTab,
-      page: currentPage,
-      pageSize,
-      sortConfig,
-      searchTerm
-    };
-    
-    if (!shouldFetchData(fetchParams)) return;
-    
-    setIsFetching(true);
     setDataLoading(true);
     
     try {
-      // Cancel any ongoing request
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      
-      abortControllerRef.current = new AbortController();
-      
       const from = (currentPage - 1) * pageSize;
       const to = from + pageSize - 1;
 
@@ -280,24 +194,23 @@ function ModernAdmin() {
           .from('parkingSpots')
           .select('*, coordinate', { count: 'exact' });
 
+        // Apply search filter
         if (searchTerm) {
           query = query.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
         }
 
+        // Apply sorting
         const sortKey = sortConfig.key || 'created_at';
         const ascending = sortConfig.direction === 'asc';
-        
-        // Add secondary sort by id to ensure consistent ordering
-        query = query.order(sortKey, { ascending }).order('id', { ascending: true });
+        query = query.order(sortKey, { ascending });
 
+        // Apply pagination
         const { data, error, count } = await query.range(from, to);
         
         if (error) {
           console.error('Error fetching parking spots:', error);
         } else {
-          // Deduplicate data before setting
-          const deduplicatedData = deduplicateById(data || []);
-          setParkingSpots(deduplicatedData);
+          setParkingSpots(data || []);
           setTotalCount(count || 0);
         }
         
@@ -306,59 +219,23 @@ function ModernAdmin() {
           .from('bicycleService')
           .select('*, coordinate', { count: 'exact' });
 
+        // Apply search filter
         if (searchTerm) {
           query = query.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
         }
 
+        // Apply sorting
         const sortKey = sortConfig.key || 'created_at';
         const ascending = sortConfig.direction === 'asc';
-        
-        // Add secondary sort by id to ensure consistent ordering and prevent pagination issues
-        query = query.order(sortKey, { ascending }).order('id', { ascending: true });
+        query = query.order(sortKey, { ascending });
 
+        // Apply pagination
         const { data, error, count } = await query.range(from, to);
         
         if (error) {
           console.error('Error fetching services:', error);
         } else {
-          // Deduplicate data before setting and log for debugging
-          const deduplicatedData = deduplicateById(data || []);
-          console.log(`Services page ${currentPage}: Original ${data?.length || 0}, Deduplicated: ${deduplicatedData.length}`);
-          
-          // Additional check for TuttoBici to debug the issue
-          const tuttoBiciEntries = data?.filter(item => item.name?.toLowerCase().includes('tuttobici')) || [];
-          if (tuttoBiciEntries.length > 0) {
-            console.log(`TuttoBici on page ${currentPage}:`, tuttoBiciEntries.map(item => ({ 
-              id: item.id, 
-              name: item.name, 
-              created_at: item.created_at,
-              [sortKey]: item[sortKey]
-            })));
-          }
-          
-          // Additional safety check - ensure no duplicate records by any means
-          const seenRecords = new Map();
-          const finalData = deduplicatedData.filter(item => {
-            // Create a unique key based on multiple fields to catch similar entries
-            const uniqueKey = `${item.name?.toLowerCase().trim()}-${item.city?.toLowerCase().trim()}-${item.address?.toLowerCase().trim()}`;
-            
-            if (seenRecords.has(uniqueKey)) {
-              console.warn('Duplicate record detected by content:', {
-                existing: seenRecords.get(uniqueKey),
-                duplicate: { id: item.id, name: item.name }
-              });
-              return false;
-            }
-            
-            seenRecords.set(uniqueKey, { id: item.id, name: item.name });
-            return true;
-          });
-          
-          if (finalData.length !== deduplicatedData.length) {
-            console.warn(`Removed ${deduplicatedData.length - finalData.length} content-duplicate items`);
-          }
-          
-          setBicycleServices(finalData);
+          setBicycleServices(data || []);
           setTotalCount(count || 0);
         }
         
@@ -367,61 +244,44 @@ function ModernAdmin() {
           .from('repairStation')
           .select('*, coordinate', { count: 'exact' });
 
+        // Apply search filter
         if (searchTerm) {
           query = query.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
         }
 
+        // Apply sorting
         const sortKey = sortConfig.key || 'created_at';
         const ascending = sortConfig.direction === 'asc';
-        
-        // Add secondary sort by id to ensure consistent ordering
-        query = query.order(sortKey, { ascending }).order('id', { ascending: true });
+        query = query.order(sortKey, { ascending });
 
+        // Apply pagination
         const { data, error, count } = await query.range(from, to);
         
         if (error) {
           console.error('Error fetching repair stations:', error);
         } else {
-          // Deduplicate data before setting
-          const deduplicatedData = deduplicateById(data || []);
-          setRepairStations(deduplicatedData);
+          setRepairStations(data || []);
           setTotalCount(count || 0);
         }
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Error fetching data:', error);
-      }
+      console.error('Error fetching data:', error);
     } finally {
       setDataLoading(false);
-      setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    if (activeTab !== 'users' && !isFetching) {
+    if (activeTab !== 'users') {
       fetchAllData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, profile, currentPage, pageSize, sortConfig, searchTerm]);
 
   // Reset to page 1 when changing tabs or search term
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab, searchTerm]);
-
-  // Debounce search to prevent excessive API calls
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      // Trigger a fresh fetch after debounce delay
-      if (activeTab === 'users' && profile?.role === 'admin' && !isFetching) {
-        setUsersLoading(true);
-      } else if (activeTab !== 'users' && !isFetching) {
-        setDataLoading(true);
-      }
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
 
   const handleDeleteClick = (table, id) => {
     setDeleteModal({ show: true, table, id });
@@ -650,9 +510,6 @@ function ModernAdmin() {
     setSelectedRows(new Set());
     setSelectAll(false);
     
-    // Clear fetch cache when switching tabs
-    lastFetchParams.current = null;
-    
     // Clear previous tab data to prevent showing stale data
     if (activeTab === 'users') {
       setParkingSpots([]);
@@ -673,14 +530,7 @@ function ModernAdmin() {
     }
   }, [activeTab]);
 
-  // Cleanup effect to abort requests on unmount
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, []);
+
 
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) {
