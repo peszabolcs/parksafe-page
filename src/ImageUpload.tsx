@@ -1,7 +1,7 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import ImagePreview from './components/ImagePreview';
 import { supabase } from './lib/supabaseClient';
-import { Image, Plus, X, AlertTriangle, Info, Loader2 } from 'lucide-react';
+import { Image, Plus, X, AlertTriangle, Info, Loader2, GripVertical } from 'lucide-react';
 import './ImageUpload.css';
 import { ImageUploadProps } from './types';
 
@@ -11,6 +11,8 @@ const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ exi
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]); // files waiting for location id
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   // Generate unique filename
   const generateFileName = (file: File): string => {
@@ -117,6 +119,55 @@ const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ exi
     }
   };
 
+  // Handle drag start
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // Handle drag over
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  // Handle drag leave
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  // Handle drop
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newImages = [...images];
+    const draggedItem = newImages[draggedIndex];
+    
+    // Remove dragged item
+    newImages.splice(draggedIndex, 1);
+    
+    // Insert at new position
+    newImages.splice(dropIndex, 0, draggedItem);
+    
+    setImages(newImages);
+    onChange(newImages);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // Handle drag end
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   // Delete image
   const handleDeleteImage = async (imageUrl: string, index: number) => {
     if (!confirm('Biztosan törölni szeretnéd ezt a képet?')) {
@@ -193,7 +244,21 @@ const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ exi
       {images.length > 0 && (
         <div className="image-grid">
           {images.map((url, index) => (
-            <div key={index} className="image-item" onClick={() => setPreviewUrl(url)} style={{ cursor: 'pointer' }}>
+            <div
+              key={index}
+              className={`image-item ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+              onClick={() => setPreviewUrl(url)}
+              style={{ cursor: 'grab' }}
+            >
+              <div className="drag-handle">
+                <GripVertical size={16} className="text-white/80" />
+              </div>
               <img src={url} alt={`Kép ${index + 1}`} />
               <button
                 type="button"
@@ -266,9 +331,11 @@ const ImageUpload = forwardRef<any, ImageUploadProps>(function ImageUpload({ exi
         </p>
       )}
 
-      <div className="image-upload-info">
-        <Info size={14} style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }} />
-        Megengedett formátumok: JPG, PNG, GIF, WebP | Maximum méret: 5MB képenként
+      <div className="flex items-start gap-2 mt-2 text-xs text-muted-foreground">
+        <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+        <span>
+          Megengedett formátumok: JPG, PNG, GIF, WebP | Maximum méret: 5MB képenként
+        </span>
       </div>
     </div>
   );

@@ -70,7 +70,7 @@ import {
   Car
 } from 'lucide-react';
 import AddLocationModal from '../AddLocationModal';
-import EditLocationModal from '../EditLocationModal';
+import EditLocationModal from '../components/EditLocationModal';
 import { lockScroll, unlockScroll } from '../utils/modalLock';
 import ImagePreview from '../components/ImagePreview';
 
@@ -2461,9 +2461,19 @@ function ModernAdmin() {
             </ScrollArea>
 
             {/* Footer */}
-            <div className="px-4 py-3 border-t border-border flex justify-end flex-shrink-0">
+            <div className="px-4 py-3 border-t border-border flex justify-end gap-2 flex-shrink-0">
               <Button variant="outline" size="sm" onClick={closeDetailModal}>
                 Bezárás
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={() => {
+                  handleEditLocation(detailModal.item);
+                  closeDetailModal();
+                }}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Szerkesztés
               </Button>
             </div>
           </DialogContent>
