@@ -67,7 +67,8 @@ import {
   Clock,
   Shield,
   Star,
-  Car
+  Car,
+  Camera
 } from 'lucide-react';
 import AddLocationModal from '../AddLocationModal';
 import EditLocationModal from '../components/EditLocationModal';
@@ -2171,6 +2172,41 @@ function ModernAdmin() {
                                 Fedett
                               </p>
                               <p className="text-sm font-medium">{detailModal.item.covered ? 'Igen' : 'Nem'}</p>
+                            </div>
+                          )}
+                          
+                          {detailModal.type === 'parking' && detailModal.item.is_open_24h !== undefined && (
+                            <div className="flex-1 min-w-[200px]">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1 mb-0.5">
+                                <Clock className="h-3 w-3" />
+                                24 órás
+                              </p>
+                              <p className="text-sm font-medium">{detailModal.item.is_open_24h ? 'Igen' : 'Nem'}</p>
+                            </div>
+                          )}
+                          
+                          {detailModal.type === 'parking' && detailModal.item.has_camera !== undefined && (
+                            <div className="flex-1 min-w-[200px]">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1 mb-0.5">
+                                <Camera className="h-3 w-3" />
+                                Kamera
+                              </p>
+                              <p className="text-sm font-medium">{detailModal.item.has_camera ? 'Igen' : 'Nem'}</p>
+                            </div>
+                          )}
+                          
+                          {detailModal.type === 'parking' && detailModal.item.capacity_level && (
+                            <div className="flex-1 min-w-[200px]">
+                              <p className="text-xs text-muted-foreground flex items-center gap-1 mb-0.5">
+                                <Users className="h-3 w-3" />
+                                Kapacitás
+                              </p>
+                              <p className="text-sm font-medium">
+                                {detailModal.item.capacity_level === 'small' ? 'Kis (1-10 hely)' :
+                                 detailModal.item.capacity_level === 'medium' ? 'Közepes (11-50 hely)' :
+                                 detailModal.item.capacity_level === 'large' ? 'Nagy (50+ hely)' :
+                                 detailModal.item.capacity_level}
+                              </p>
                             </div>
                           )}
                           

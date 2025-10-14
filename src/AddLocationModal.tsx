@@ -17,6 +17,9 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
     lon: '',
     // Parking specific
     covered: false,
+    is_open_24h: false,
+    capacity_level: '',
+    has_camera: false,
     // Service specific
     phone: '',
     website: '',
@@ -74,6 +77,9 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
       if (locationType === 'parking') {
         tableName = 'parkingSpots';
         (insertData as any).covered = formData.covered;
+        (insertData as any).is_open_24h = formData.is_open_24h;
+        (insertData as any).capacity_level = formData.capacity_level || null;
+        (insertData as any).has_camera = formData.has_camera;
       } else if (locationType === 'services') {
         tableName = 'bicycleService';
         (insertData as any).phone = formData.phone || null;
@@ -129,6 +135,9 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
           lat: '',
           lon: '',
           covered: false,
+          is_open_24h: false,
+          capacity_level: '',
+          has_camera: false,
           phone: '',
           website: '',
           opening_hours: '',
@@ -274,15 +283,53 @@ function AddLocationModal({ isOpen, onClose, locationType, onSuccess }) {
 
           {/* Parking specific fields */}
           {locationType === 'parking' && (
-            <div className="form-group checkbox-group">
-              <Switch
-                label="Fedett parkoló"
-                checked={formData.covered}
-                onChange={handleChange}
-                disabled={isLoading}
-                name="covered"
-              />
-            </div>
+            <>
+              <div className="form-group checkbox-group">
+                <Switch
+                  label="Fedett parkoló"
+                  checked={formData.covered}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  name="covered"
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <Switch
+                  label="24 órás nyitvatartás"
+                  checked={formData.is_open_24h}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  name="is_open_24h"
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <Switch
+                  label="Kamera biztonság"
+                  checked={formData.has_camera}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  name="has_camera"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="capacity_level">Kapacitás szint</label>
+                <select
+                  id="capacity_level"
+                  name="capacity_level"
+                  value={formData.capacity_level}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                >
+                  <option value="">Válassz...</option>
+                  <option value="small">Kis (1-10 hely)</option>
+                  <option value="medium">Közepes (11-50 hely)</option>
+                  <option value="large">Nagy (50+ hely)</option>
+                </select>
+              </div>
+            </>
           )}
 
           {/* Service specific fields */}

@@ -18,6 +18,9 @@ function EditLocationModal({ isOpen, onClose, locationType, item, onSuccess }) {
     lat: '',
     lon: '',
     covered: false,
+    is_open_24h: false,
+    capacity_level: '',
+    has_camera: false,
     phone: '',
     website: '',
     opening_hours: '',
@@ -87,6 +90,9 @@ function EditLocationModal({ isOpen, onClose, locationType, item, onSuccess }) {
         lat: coords.lat ? coords.lat.toString() : '',
         lon: coords.lon ? coords.lon.toString() : '',
         covered: item.covered || false,
+        is_open_24h: item.is_open_24h || false,
+        capacity_level: item.capacity_level || '',
+        has_camera: item.has_camera || false,
         phone: item.phone || '',
         website: item.website || '',
         opening_hours: item.opening_hours || '',
@@ -138,6 +144,9 @@ function EditLocationModal({ isOpen, onClose, locationType, item, onSuccess }) {
       if (locationType === 'parking') {
         tableName = 'parkingSpots';
         (updateData as any).covered = formData.covered;
+        (updateData as any).is_open_24h = formData.is_open_24h;
+        (updateData as any).capacity_level = formData.capacity_level || null;
+        (updateData as any).has_camera = formData.has_camera;
       } else if (locationType === 'services') {
         tableName = 'bicycleService';
         (updateData as any).phone = formData.phone || null;
@@ -310,14 +319,53 @@ function EditLocationModal({ isOpen, onClose, locationType, item, onSuccess }) {
 
               {/* Parking specific fields */}
               {locationType === 'parking' && (
-                <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-muted/30">
-                  <Label htmlFor="covered" className="cursor-pointer">Fedett parkoló</Label>
-                  <Switch
-                    id="covered"
-                    checked={formData.covered}
-                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, covered: checked }))}
-                    disabled={isLoading}
-                  />
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-muted/30">
+                    <Label htmlFor="covered" className="cursor-pointer">Fedett parkoló</Label>
+                    <Switch
+                      id="covered"
+                      checked={formData.covered}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, covered: checked }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-muted/30">
+                    <Label htmlFor="is_open_24h" className="cursor-pointer">24 órás nyitvatartás</Label>
+                    <Switch
+                      id="is_open_24h"
+                      checked={formData.is_open_24h}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_open_24h: checked }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-muted/30">
+                    <Label htmlFor="has_camera" className="cursor-pointer">Kamera biztonság</Label>
+                    <Switch
+                      id="has_camera"
+                      checked={formData.has_camera}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, has_camera: checked }))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="capacity_level">Kapacitás szint</Label>
+                    <select
+                      id="capacity_level"
+                      name="capacity_level"
+                      value={formData.capacity_level}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Válassz...</option>
+                      <option value="small">Kis (1-10 hely)</option>
+                      <option value="medium">Közepes (11-50 hely)</option>
+                      <option value="large">Nagy (50+ hely)</option>
+                    </select>
+                  </div>
                 </div>
               )}
 
