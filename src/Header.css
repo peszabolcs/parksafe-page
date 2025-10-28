@@ -1,7 +1,7 @@
 .header {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -35,7 +35,10 @@
 .logo-text {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .header-actions {
@@ -45,7 +48,7 @@
 }
 
 .contact-button {
-  background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -55,6 +58,7 @@
   transition: all 0.2s;
   text-decoration: none;
   display: inline-block;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .contact-button:hover {

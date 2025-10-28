@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Smartphone, Bot, Mail, FileText, Lock } from "lucide-react";
 import "./Footer.css";
 
 function Footer() {
@@ -7,11 +8,26 @@ function Footer() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-links">
-            <a href="#" className="footer-link">📱 App Store</a>
-            <a href="#" className="footer-link">🤖 Google Play</a>
-            <Link to="/contact" className="footer-link">📧 Kapcsolat</Link>
-            <Link to="/terms" className="footer-link">📋 ÁSZF</Link>
-            <Link to="/privacy" className="footer-link">🔒 Adatvédelem</Link>
+            <a href="#" className="footer-link">
+              <Smartphone size={16} />
+              App Store
+            </a>
+            <a href="#" className="footer-link">
+              <Bot size={16} />
+              Google Play
+            </a>
+            <Link to="/contact" className="footer-link">
+              <Mail size={16} />
+              Kapcsolat
+            </Link>
+            <Link to="/terms" className="footer-link">
+              <FileText size={16} />
+              ÁSZF
+            </Link>
+            <Link to="/privacy" className="footer-link">
+              <Lock size={16} />
+              Adatvédelem
+            </Link>
           </div>
         </div>
         <div className="footer-bottom">
