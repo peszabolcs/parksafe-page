@@ -23,23 +23,30 @@
 
 .stat-number {
   display: block;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
-  color: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 4px;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #6b7280;
+  color: #94a3b8;
   font-weight: 500;
 }
 
 .hero-subtext {
   margin-top: 16px;
   font-size: 14px;
-  color: #9ca3af;
+  color: #94a3b8;
   font-weight: 500;
+}
+
+.button-icon {
+  animation: bounce 2s infinite;
 }
 
 /* CTA Benefits */
@@ -58,6 +65,14 @@
   font-size: 16px;
   font-weight: 500;
   text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.benefit-icon {
+  flex-shrink: 0;
+  color: #10b981;
 }
 
 .cta-countdown {
@@ -82,14 +97,12 @@
 .hero {
   background: linear-gradient(
     135deg,
-    #10b981 0%,
-    #14b8a6 25%,
-    #0ea5e9 50%,
-    #1e40af 75%,
-    #1f2937 100%
+    #0f172a 0%,
+    #1e293b 50%,
+    #0f172a 100%
   );
   background-size: 400% 400%;
-  animation: gradientShift 8s ease infinite;
+  animation: gradientShift 15s ease infinite;
   padding: 120px 0 80px;
   min-height: 90vh;
   display: flex;
@@ -105,7 +118,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.92);
+  background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.15), transparent 50%),
+              radial-gradient(ellipse at bottom right, rgba(59, 130, 246, 0.15), transparent 50%);
   z-index: 1;
 }
 
@@ -138,16 +152,25 @@
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 24px;
-  color: #1f2937;
+  color: #ffffff;
   animation: fadeInUp 1s ease 0.2s both;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .highlight {
-  background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  background-size: 200% auto;
+  animation: shimmerText 3s linear infinite;
+}
+
+@keyframes shimmerText {
+  to {
+    background-position: 200% center;
+  }
 }
 
 .highlight::after {
@@ -156,24 +179,26 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 3px;
-  background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  height: 4px;
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
   border-radius: 2px;
+  animation: shimmer 3s linear infinite;
 }
 
 .hero-description {
   font-size: 20px;
-  color: #4b5563;
+  color: #cbd5e1;
   margin-bottom: 40px;
   line-height: 1.7;
   animation: fadeInUp 1s ease 0.4s both;
 }
 
 .cta-button {
-  background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+  background-size: 200% auto;
   color: white;
   border: none;
-  padding: 18px 36px;
+  padding: 20px 40px;
   border-radius: 50px;
   font-size: 18px;
   font-weight: 700;
@@ -182,7 +207,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 40px rgba(16, 185, 129, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
   position: relative;
   overflow: hidden;
   animation: fadeInUp 1s ease 0.6s both, pulse 2s infinite;

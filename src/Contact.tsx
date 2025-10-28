@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Mail, Building2, Clock, Send, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import "./Contact.css";
 import { ContactFormData } from "./types";
 
@@ -49,7 +50,10 @@ function Contact() {
     <div className="contact-page">
       <div className="container">
         <div className="contact-header">
-          <h1>📧 Kapcsolat</h1>
+          <h1>
+            <Mail className="header-icon" size={40} />
+            Kapcsolat
+          </h1>
           <p>
             Van kérdésed, javaslatos vagy csak szeretnél beszélni velünk?
             Örülünk minden megkeresésnek!
@@ -60,14 +64,18 @@ function Contact() {
           <div className="contact-info">
             <h2>Lépj velünk kapcsolatba</h2>
             <div className="info-item">
-              <div className="info-icon">📧</div>
+              <div className="info-icon">
+                <Mail size={24} />
+              </div>
               <div className="info-details">
                 <h3>Email</h3>
                 <p>hello@parksafe.hu</p>
               </div>
             </div>
             <div className="info-item">
-              <div className="info-icon">🏢</div>
+              <div className="info-icon">
+                <Building2 size={24} />
+              </div>
               <div className="info-details">
                 <h3>Cég</h3>
                 <p>
@@ -78,7 +86,9 @@ function Contact() {
               </div>
             </div>
             <div className="info-item">
-              <div className="info-icon">⏰</div>
+              <div className="info-icon">
+                <Clock size={24} />
+              </div>
               <div className="info-details">
                 <h3>Válaszidő</h3>
                 <p>
@@ -137,13 +147,15 @@ function Contact() {
 
               {status === "success" && (
                 <div className="status-message success">
-                  ✅ Köszönjük az üzeneted! Hamarosan válaszolunk.
+                  <CheckCircle2 size={20} />
+                  Köszönjük az üzeneted! Hamarosan válaszolunk.
                 </div>
               )}
 
               {status === "error" && (
                 <div className="status-message error">
-                  ❌ Hiba történt az üzenet küldésekor. Kérlek próbáld újra!
+                  <XCircle size={20} />
+                  Hiba történt az üzenet küldésekor. Kérlek próbáld újra!
                 </div>
               )}
 
@@ -152,7 +164,17 @@ function Contact() {
                 className="submit-btn"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "🔄 Küldés..." : "📤 Üzenet küldése"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={20} className="spinner" />
+                    Küldés...
+                  </>
+                ) : (
+                  <>
+                    <Send size={20} />
+                    Üzenet küldése
+                  </>
+                )}
               </button>
             </form>
           </div>

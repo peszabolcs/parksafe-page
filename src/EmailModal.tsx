@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { X, Rocket, CheckCircle2, XCircle, Loader2, Check } from "lucide-react";
 import "./EmailModal.css";
 
 function EmailModal({ isOpen, onClose }) {
@@ -55,11 +56,13 @@ function EmailModal({ isOpen, onClose }) {
     <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content">
         <button className="modal-close" onClick={onClose}>
-          ✕
+          <X size={24} />
         </button>
-        
+
         <div className="modal-header">
-          <div className="modal-icon">🚀</div>
+          <div className="modal-icon">
+            <Rocket size={32} />
+          </div>
           <h2>Értesítést kérek az indulásról!</h2>
           <p>
             Legyél az elsők között, akik megtudják, amikor a ParkSafe elérhető lesz.
@@ -83,13 +86,15 @@ function EmailModal({ isOpen, onClose }) {
 
           {status === "success" && (
             <div className="status-message success">
-              ✅ Sikeresen feliratkoztál! Hamarosan jelentkezünk.
+              <CheckCircle2 size={20} />
+              Sikeresen feliratkoztál! Hamarosan jelentkezünk.
             </div>
           )}
 
           {status === "error" && (
             <div className="status-message error">
-              ❌ {errorMessage}
+              <XCircle size={20} />
+              {errorMessage}
             </div>
           )}
 
@@ -98,14 +103,33 @@ function EmailModal({ isOpen, onClose }) {
             className="modal-submit"
             disabled={isLoading || !email}
           >
-            {isLoading ? "⏳ Küldés..." : "🎉 Feliratkozom!"}
+            {isLoading ? (
+              <>
+                <Loader2 size={20} className="spinner" />
+                Küldés...
+              </>
+            ) : (
+              <>
+                <Rocket size={20} />
+                Feliratkozom!
+              </>
+            )}
           </button>
         </form>
 
         <div className="modal-benefits">
-          <div className="benefit-item">✅ Korai hozzáférés az alkalmazáshoz</div>
-          <div className="benefit-item">✅ 1 hónap ingyenes prémium funkció</div>
-          <div className="benefit-item">✅ Exkluzív kedvezmények</div>
+          <div className="benefit-item">
+            <Check size={18} />
+            Korai hozzáférés az alkalmazáshoz
+          </div>
+          <div className="benefit-item">
+            <Check size={18} />
+            1 hónap ingyenes prémium funkció
+          </div>
+          <div className="benefit-item">
+            <Check size={18} />
+            Exkluzív kedvezmények
+          </div>
         </div>
       </div>
     </div>

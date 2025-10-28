@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Rocket, MapPin, Shield, Star, Wrench, Check, Sparkles, Bike, Zap } from "lucide-react";
 import EmailModal from "./EmailModal.tsx";
 
 function HomePage() {
@@ -81,7 +82,8 @@ function HomePage() {
               </div>
             </div>
             <button className="cta-button" onClick={openModal}>
-              🚀 Értesítést kérek az indulásról!
+              <Rocket className="button-icon" size={20} />
+              Értesítést kérek az indulásról!
             </button>
             <p className="hero-subtext">
               Ingyenes • Androidos és iOS • Hamarosan elérhető
@@ -113,7 +115,9 @@ function HomePage() {
           </div>
           <div className="target-grid">
             <div className="target-card">
-              <div className="target-icon">🚴‍♂️</div>
+              <div className="target-icon">
+                <Bike size={40} />
+              </div>
               <h3>Biciklisek</h3>
               <p>
                 Napi ingázók és hétvégi kerékpárosok, akik biztonságos
@@ -122,7 +126,9 @@ function HomePage() {
               </p>
             </div>
             <div className="target-card">
-              <div className="target-icon">🛴</div>
+              <div className="target-icon">
+                <Zap size={40} />
+              </div>
               <h3>Rolleresek</h3>
               <p>
                 Elektromos roller tulajdonosok, akiknek ugyanúgy fontos a
@@ -143,7 +149,9 @@ function HomePage() {
           </div>
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon green">📍</div>
+              <div className="feature-icon green">
+                <MapPin size={28} />
+              </div>
               <h3>Valós idejű elérhetőség</h3>
               <p>
                 Azonnali információ a szabad helyekről – nincs több felesleges
@@ -151,7 +159,9 @@ function HomePage() {
               </p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon blue">🛡️</div>
+              <div className="feature-icon blue">
+                <Shield size={28} />
+              </div>
               <h3>Biztonság mindenek felett</h3>
               <p>
                 Csak olyan tárolókat mutatunk, ahol tényleg biztonságban van a
@@ -159,7 +169,9 @@ function HomePage() {
               </p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon green">⭐</div>
+              <div className="feature-icon green">
+                <Star size={28} />
+              </div>
               <h3>Közösségi visszajelzések</h3>
               <p>
                 Nézd meg mások tapasztalatait és oszd meg a sajátod is – együtt
@@ -167,7 +179,9 @@ function HomePage() {
               </p>
             </div>
             <div className="feature-card">
-              <div className="feature-icon blue">🔧</div>
+              <div className="feature-icon blue">
+                <Wrench size={28} />
+              </div>
               <h3>Szerviz és kiegészítők</h3>
               <p>
                 Egy helyen minden, amire bringásként szükséged lehet –
@@ -191,15 +205,21 @@ function HomePage() {
             </p>
             <div className="cta-benefits">
               <div className="benefit">
-                ✅ Elsőként férhetsz hozzá a legjobb tárolóhelyekhez
+                <Check size={20} className="benefit-icon" />
+                Elsőként férhetsz hozzá a legjobb tárolóhelyekhez
               </div>
               <div className="benefit">
-                ✅ Exkluzív kedvezmények partnereinknél
+                <Check size={20} className="benefit-icon" />
+                Exkluzív kedvezmények partnereinknél
               </div>
-              <div className="benefit">✅ Korai hozzáférés új funkciókhoz</div>
+              <div className="benefit">
+                <Check size={20} className="benefit-icon" />
+                Korai hozzáférés új funkciókhoz
+              </div>
             </div>
             <button className="cta-button-white" onClick={openModal}>
-              🎉 Igen, csatlakozom az első 1000 közé!
+              <Sparkles size={20} className="button-icon" />
+              Igen, csatlakozom az első 1000 közé!
             </button>
             <p className="cta-countdown">
               Már csak <span className="countdown-number">247</span> hely
