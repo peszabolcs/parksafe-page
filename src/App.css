@@ -163,8 +163,10 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+  display: inline-block;
   background-size: 200% auto;
   animation: shimmerText 3s linear infinite;
+  padding-bottom: 8px;
 }
 
 @keyframes shimmerText {
@@ -176,10 +178,10 @@
 .highlight::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: 4px;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 3px;
   background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
   border-radius: 2px;
 }
