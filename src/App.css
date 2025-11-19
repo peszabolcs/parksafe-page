@@ -45,6 +45,76 @@
   font-weight: 500;
 }
 
+/* Store Buttons */
+.store-buttons {
+  display: flex;
+  gap: 16px;
+  margin: 32px 0 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.store-buttons-cta {
+  display: flex;
+  gap: 16px;
+  margin: 32px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.store-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+}
+
+.store-button.apple {
+  background: #000000;
+  color: white;
+}
+
+.store-button.google {
+  background: #000000;
+  color: white;
+}
+
+.store-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.store-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.store-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.store-small {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.store-large {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
 .button-icon {
   animation: bounce 2s infinite;
 }
@@ -972,6 +1042,16 @@
     font-size: 13px;
   }
 
+  .store-buttons,
+  .store-buttons-cta {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .store-button {
+    min-width: 200px;
+  }
+
   /* Phone mockup */
   .phone-mockup {
     max-width: 240px;
@@ -1113,6 +1193,20 @@
   .cta-button {
     padding: 14px 24px;
     font-size: 15px;
+  }
+
+  .store-button {
+    min-width: 180px;
+    padding: 10px 20px;
+  }
+
+  .store-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .store-large {
+    font-size: 14px;
   }
 
   .phone-mockup {
