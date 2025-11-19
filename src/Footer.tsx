@@ -8,11 +8,21 @@ function Footer() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-links">
-            <a href="#" className="footer-link">
+            <a
+              href="https://apps.apple.com/app/id6752813986"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link"
+            >
               <Smartphone size={16} />
               App Store
             </a>
-            <a href="#" className="footer-link">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.parksafe.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link"
+            >
               <Bot size={16} />
               Google Play
             </a>
