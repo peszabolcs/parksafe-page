@@ -60,7 +60,7 @@ function Profile() {
       // Delete the user account from Supabase Auth
       const { error } = await supabase
         .rpc('delete_user_account', { user_id: user.id });
-      
+
       if (error) {
         console.error('Error deleting account:', error);
         setDeleteError('Hiba történt a fiók törlése során. Kérjük, próbálja újra később.');
@@ -113,7 +113,7 @@ function Profile() {
             )}
           </div>
           <h1>Profil</h1>
-  
+
           {isAdmin && (
             <div className="admin-badge">
               <svg className="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -296,7 +296,7 @@ function Profile() {
               </div>
               <h2>Fiók törlése</h2>
             </div>
-            
+
             <div className="delete-modal-content">
               <p className="delete-warning">
                 <strong>Figyelem!</strong> Ez a művelet véglegesen törli a fiókját és minden kapcsolódó adatot:
@@ -309,7 +309,7 @@ function Profile() {
               <p className="delete-confirmation-text">
                 Ez a művelet <strong>nem vonható vissza</strong>. Biztos, hogy folytatja?
               </p>
-              
+
               {deleteError && (
                 <div className="delete-error">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -321,15 +321,15 @@ function Profile() {
             </div>
 
             <div className="delete-modal-actions">
-              <button 
-                onClick={() => setShowDeleteModal(false)} 
+              <button
+                onClick={() => setShowDeleteModal(false)}
                 className="cancel-button"
                 disabled={deleteLoading}
               >
                 Mégsem
               </button>
-              <button 
-                onClick={handleDeleteAccount} 
+              <button
+                onClick={handleDeleteAccount}
                 className="confirm-delete-button"
                 disabled={deleteLoading}
               >
