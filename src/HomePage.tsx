@@ -7,7 +7,7 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 function HomePage() {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
-    () => ["bárhol", "bármikor", "biztonságban", "egyszerűen", "gyorsan"],
+    () => ["bárhol", "bármikor", "egyszerűen", "gyorsan", "könnyedén"],
     []
   );
 
@@ -77,13 +77,13 @@ function HomePage() {
           <div className="hero-content">
             <h1 className="hero-title">
               Tartsd biztonságban a bringád{" "}
-              <span className="relative inline-flex overflow-hidden h-[1.2em] align-middle">
+              <span className="relative inline-block overflow-hidden align-baseline" style={{ width: '200px', height: '1.2em' }}>
                 {titles.map((title, index) => (
                   <motion.span
                     key={index}
-                    className="absolute font-bold highlight"
-                    initial={{ opacity: 0, y: "-100" }}
-                    transition={{ type: "spring", stiffness: 50 }}
+                    className="absolute left-0 top-0 highlight whitespace-nowrap"
+                    initial={{ opacity: 0, y: 50 }}
+                    transition={{ type: "spring", stiffness: 50, damping: 15 }}
                     animate={
                       titleNumber === index
                         ? {
@@ -91,7 +91,7 @@ function HomePage() {
                             opacity: 1,
                           }
                         : {
-                            y: titleNumber > index ? -150 : 150,
+                            y: titleNumber > index ? -50 : 50,
                             opacity: 0,
                           }
                     }
