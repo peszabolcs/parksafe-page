@@ -149,6 +149,7 @@
   }
 }
 
+@layer base {
   /* Force dark mode for admin panel */
   .admin-dark {
     --background: oklch(0.145 0 0);
