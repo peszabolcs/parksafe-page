@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Shield, Star, Wrench, Check, Bike, Zap, Download } from "lucide-react";
+import { motion } from "framer-motion";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 function HomePage() {
 
@@ -44,8 +46,18 @@ function HomePage() {
   return (
     <div className="home-page">
       {/* Hero Section */}
-      <section className="hero">
-        <div className="container hero-container">
+      <AuroraBackground className="!min-h-[90vh] !h-auto !justify-start !pt-[120px] !pb-[80px]">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.2,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="container hero-container"
+          style={{ position: 'relative', zIndex: 2 }}
+        >
           <div className="hero-content">
             <h1 className="hero-title">
               Tartsd biztonságban a bringád{" "}
@@ -121,8 +133,8 @@ function HomePage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </AuroraBackground>
 
       {/* Target Audience Section */}
       <section className="target-audience">
