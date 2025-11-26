@@ -46,7 +46,7 @@ function HomePage() {
   return (
     <div className="home-page">
       {/* Hero Section */}
-      <AuroraBackground className="!min-h-[90vh] !h-auto !justify-start !pt-[120px] !pb-[80px]">
+      <AuroraBackground className="dark !min-h-[90vh] !h-auto !justify-start !pt-[120px] !pb-[80px]">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ function HomePage() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="container hero-container"
+          className="container hero-container dark:text-white"
           style={{ position: 'relative', zIndex: 2 }}
         >
           <div className="hero-content">
