@@ -77,19 +77,25 @@ function HomePage() {
           <div className="hero-content">
             <h1 className="hero-title">
               Tartsd biztonságban a bringád{" "}
-              <span className="relative inline-block" style={{ width: '200px', verticalAlign: 'bottom', marginBottom: '-0.1em' }}>
+              <span className="relative inline-flex overflow-hidden" style={{ width: '200px', height: '1.2em', verticalAlign: 'bottom' }}>
+                &nbsp;
                 {titles.map((title, index) => (
                   <motion.span
                     key={index}
-                    className="absolute left-0 top-0 highlight whitespace-nowrap"
-                    initial={{ opacity: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      ease: "easeInOut"
-                    }}
-                    animate={{
-                      opacity: titleNumber === index ? 1 : 0
-                    }}
+                    className="absolute highlight"
+                    initial={{ opacity: 0, y: "-100" }}
+                    transition={{ type: "spring", stiffness: 50 }}
+                    animate={
+                      titleNumber === index
+                        ? {
+                            y: 0,
+                            opacity: 1,
+                          }
+                        : {
+                            y: titleNumber > index ? -150 : 150,
+                            opacity: 0,
+                          }
+                    }
                   >
                     {title}
                   </motion.span>
