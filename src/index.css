@@ -49,15 +49,15 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
 
-  /* Aurora Background color variables */
+  /* Aurora Background color variables - ParkSafe brand colors */
   --white: #ffffff;
   --black: #000000;
   --transparent: transparent;
-  --blue-500: #1e40af;
-  --blue-400: #1e3a8a;
-  --blue-300: #1e293b;
-  --indigo-300: #4338ca;
-  --violet-200: #5b21b6;
+  --blue-500: #10b981;
+  --blue-400: #14b8a6;
+  --blue-300: #0ea5e9;
+  --indigo-300: #06b6d4;
+  --violet-200: #22d3ee;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
