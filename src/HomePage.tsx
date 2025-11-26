@@ -1,10 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, Shield, Star, Wrench, Check, Bike, Zap, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 
 function HomePage() {
+  const [titleNumber, setTitleNumber] = useState(0);
+  const titles = useMemo(
+    () => ["bárhol", "bármikor", "biztonságban", "egyszerűen", "gyorsan"],
+    []
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (titleNumber === titles.length - 1) {
+        setTitleNumber(0);
+      } else {
+        setTitleNumber(titleNumber + 1);
+      }
+    }, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [titleNumber, titles]);
 
   useEffect(() => {
     // Animated counter effect
@@ -61,7 +77,29 @@ function HomePage() {
           <div className="hero-content">
             <h1 className="hero-title">
               Tartsd biztonságban a bringád{" "}
-              <span className="highlight">bárhol, bármikor</span>
+              <span className="relative inline-flex overflow-hidden h-[1.2em] align-middle">
+                {titles.map((title, index) => (
+                  <motion.span
+                    key={index}
+                    className="absolute font-bold highlight"
+                    initial={{ opacity: 0, y: "-100" }}
+                    transition={{ type: "spring", stiffness: 50 }}
+                    animate={
+                      titleNumber === index
+                        ? {
+                            y: 0,
+                            opacity: 1,
+                          }
+                        : {
+                            y: titleNumber > index ? -150 : 150,
+                            opacity: 0,
+                          }
+                    }
+                  >
+                    {title}
+                  </motion.span>
+                ))}
+              </span>
             </h1>
             <p className="hero-description">
               Fedezd fel a legmegbízhatóbb biciklitárolókat a közeledben! Valós
