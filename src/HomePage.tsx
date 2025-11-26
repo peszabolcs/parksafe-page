@@ -77,7 +77,7 @@ function HomePage() {
           <div className="hero-content">
             <h1 className="hero-title">
               Tartsd biztonságban a bringád{" "}
-              <span className="relative inline-block overflow-hidden" style={{ width: '300px', height: '1.2em', verticalAlign: 'bottom' }}>
+              <span className="relative inline-block overflow-hidden" style={{ width: '380px', height: '1.2em', verticalAlign: 'bottom' }}>
                 {titles.map((title, index) => (
                   <motion.span
                     key={index}
