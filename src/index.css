@@ -53,11 +53,11 @@
   --white: #ffffff;
   --black: #000000;
   --transparent: transparent;
-  --blue-500: #3b82f6;
-  --blue-400: #60a5fa;
-  --blue-300: #93c5fd;
-  --indigo-300: #a5b4fc;
-  --violet-200: #ddd6fe;
+  --blue-500: #1e40af;
+  --blue-400: #1e3a8a;
+  --blue-300: #1e293b;
+  --indigo-300: #4338ca;
+  --violet-200: #5b21b6;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
